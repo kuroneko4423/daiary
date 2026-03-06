@@ -1,0 +1,28 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(flutter --version)",
+      "Bash(docker --version)",
+      "Bash(git --version)",
+      "Bash(supabase --version)",
+      "Bash(pip --version)",
+      "Bash(pip3 --version)",
+      "Bash(node --version)",
+      "Bash(npx --version)",
+      "Bash(flutter create --org com.aiphotographer --project-name ai_photographer mobile)",
+      "Bash(flutter pub get)",
+      "Bash(flutter analyze)",
+      "Bash(python -c \"from main import app; print\\(''FastAPI app loads OK''\\)\")",
+      "Bash(pip install \"websockets>=13.0\")",
+      "Bash(pip show supabase)",
+      "Bash(pip install -r requirements.txt)",
+      "Bash(py -3.12 -c \"from main import app; print\\(''FastAPI app loads OK''\\)\")",
+      "Bash(py -3.12 -m pip install email-validator)",
+      "Bash(py -3.12 -c \"from main import app; print\\(''OK''\\)\")",
+      "Bash(py -3.12 -c \"from main import app; print\\(''FastAPI OK''\\)\")",
+      "Bash(py -3.12 -m pytest -v)",
+      "Bash(flutter test test/core/ test/features/ test/services/)",
+      "Bash(py -3.12 -m pytest tests/test_ai_generate.py -v)"
+    ]
+  }
+}

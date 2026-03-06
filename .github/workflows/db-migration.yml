@@ -1,0 +1,30 @@
+name: DB Migration
+
+on:
+  push:
+    paths:
+      - 'supabase/**'
+  pull_request:
+    paths:
+      - 'supabase/**'
+
+jobs:
+  validate-sql:
+    name: Validate SQL
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check SQL files exist and have content
+        run: |
+          found=0
+          for f in $(find supabase -name '*.sql' -type f); do
+            if [ ! -s "$f" ]; then
+              echo "ERROR: $f is empty"
+              exit 1
+            fi
+            echo "OK: $f"
+            found=$((found + 1))
+          done
+          echo "Validated $found SQL file(s)"

@@ -1,0 +1,65 @@
+# ==== Flutter / Dart ====
+mobile/.dart_tool/
+mobile/.packages
+mobile/.pub-cache/
+mobile/.pub/
+mobile/build/
+mobile/.flutter-plugins
+mobile/.flutter-plugins-dependencies
+mobile/android/.gradle/
+mobile/android/local.properties
+mobile/android/**/GeneratedPluginRegistrant.java
+mobile/ios/Flutter/Generated.xcconfig
+mobile/ios/Flutter/flutter_export_environment.sh
+mobile/ios/Runner/GeneratedPluginRegistrant.*
+mobile/ios/Pods/
+mobile/ios/.symlinks/
+*.iml
+
+# ==== Python ====
+backend/__pycache__/
+backend/**/__pycache__/
+backend/*.py[cod]
+backend/**/*.py[cod]
+backend/.venv/
+backend/venv/
+backend/.env
+backend/*.egg-info/
+backend/dist/
+backend/build/
+backend/.pytest_cache/
+backend/.ruff_cache/
+backend/htmlcov/
+backend/.coverage
+
+# ==== Environment ====
+.env
+.env.local
+.env.*.local
+*.env
+
+# ==== IDE ====
+.vscode/settings.json
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# ==== Docker ====
+docker-compose.override.yml
+
+# ==== Supabase ====
+supabase/.temp/
+supabase/.branches/
+
+# ==== Node (for tooling) ====
+node_modules/
+package-lock.json
+
+# ==== Build artifacts ====
+*.apk
+*.aab
+*.ipa
+*.app
