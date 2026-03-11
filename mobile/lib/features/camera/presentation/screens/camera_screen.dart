@@ -3,6 +3,8 @@ import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import '../../../../core/constants/share_constants.dart';
+import '../../../../services/share_service.dart';
 import '../../data/repositories/camera_repository.dart';
 import '../providers/camera_provider.dart';
 import '../widgets/camera_controls.dart';
@@ -282,6 +284,20 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
                     },
                     icon: const Icon(Icons.refresh),
                     label: const Text('Retake'),
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: Colors.white,
+                      side: const BorderSide(color: Colors.white54),
+                    ),
+                  ),
+                  OutlinedButton.icon(
+                    onPressed: () {
+                      ShareService.shareImageWithText(
+                        imagePath,
+                        text: ShareTemplates.defaultShareText,
+                      );
+                    },
+                    icon: const Icon(Icons.share),
+                    label: const Text('Share'),
                     style: OutlinedButton.styleFrom(
                       foregroundColor: Colors.white,
                       side: const BorderSide(color: Colors.white54),

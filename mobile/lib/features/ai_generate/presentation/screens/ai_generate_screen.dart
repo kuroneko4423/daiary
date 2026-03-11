@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import '../../../../core/constants/share_constants.dart';
 import '../../../../services/share_service.dart';
 import '../../domain/entities/generation_result.dart';
 import '../providers/ai_generate_provider.dart';
@@ -235,6 +236,30 @@ class _AIGenerateScreenState extends ConsumerState<AIGenerateScreen> {
                 },
                 onShare: () => ShareService.shareText(aiState.caption!),
                 onRegenerate: () => _generateCaption(),
+              ),
+            ],
+
+            // Share with photo button
+            if (aiState.hashtags != null || aiState.caption != null) ...[
+              const SizedBox(height: 24),
+              SizedBox(
+                width: double.infinity,
+                child: FilledButton.icon(
+                  onPressed: widget.photoPath != null
+                      ? () {
+                          final text = ShareTemplates.buildShareText(
+                            hashtags: aiState.hashtags?.join(' '),
+                            caption: aiState.caption,
+                          );
+                          ShareService.shareImageWithText(
+                            widget.photoPath!,
+                            text: text,
+                          );
+                        }
+                      : null,
+                  icon: const Icon(Icons.share),
+                  label: const Text('Share with Photo'),
+                ),
               ),
             ],
           ],
