@@ -1,4 +1,4 @@
-# ai_photographer
+# daiary
 
 A new Flutter project.
 

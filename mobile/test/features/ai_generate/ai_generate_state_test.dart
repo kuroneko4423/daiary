@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:ai_photographer/features/ai_generate/presentation/providers/ai_generate_provider.dart';
+import 'package:daiary/features/ai_generate/presentation/providers/ai_generate_provider.dart';
 
 void main() {
   group('AiGenerateState', () {

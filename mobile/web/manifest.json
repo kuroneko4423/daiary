@@ -1,6 +1,6 @@
 {
-    "name": "ai_photographer",
-    "short_name": "ai_photographer",
+    "name": "dAIary",
+    "short_name": "dAIary",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

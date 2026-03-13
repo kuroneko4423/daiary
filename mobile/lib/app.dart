@@ -3,15 +3,15 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'config/router.dart';
 import 'config/theme.dart';
 
-class AIPhotographerApp extends ConsumerWidget {
-  const AIPhotographerApp({super.key});
+class DAIaryApp extends ConsumerWidget {
+  const DAIaryApp({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final router = ref.watch(routerProvider);
 
     return MaterialApp.router(
-      title: 'AI Photographer',
+      title: 'dAIary',
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
       themeMode: ThemeMode.system,

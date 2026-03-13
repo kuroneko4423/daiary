@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:ai_photographer/features/ai_generate/domain/entities/generation_result.dart';
+import 'package:daiary/features/ai_generate/domain/entities/generation_result.dart';
 
 void main() {
   group('GenerationStyle', () {

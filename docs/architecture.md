@@ -2,7 +2,7 @@
 
 ## 1. システム全体構成
 
-AI Photographer は、Flutter モバイルアプリ、FastAPI バックエンド、Supabase (PostgreSQL + Auth + Storage)、および Google Gemini API を組み合わせた 3 層アーキテクチャで構成されています。
+dAIary は、Flutter モバイルアプリ、FastAPI バックエンド、Supabase (PostgreSQL + Auth + Storage)、および Google Gemini API を組み合わせた 3 層アーキテクチャで構成されています。
 
 ```
 ┌─────────────────────┐
@@ -41,7 +41,7 @@ AI Photographer は、Flutter モバイルアプリ、FastAPI バックエンド
 プロジェクトはモノレポ構成を採用しており、モバイルアプリ・バックエンド・インフラ定義を単一リポジトリで管理しています。
 
 ```
-ai-photographer/
+daiary/
 ├── mobile/              # Flutter モバイルアプリ (iOS / Android)
 ├── backend/             # FastAPI バックエンドAPI (Python 3.12)
 ├── supabase/            # DBマイグレーション・RLS ポリシー定義 (SQL)
@@ -436,7 +436,7 @@ FastAPI Backend
 docker compose up -d
 
 # バックエンドの環境変数は backend/.env に設定
-# DB接続情報: postgres:postgres@localhost:5432/ai_photographer
+# DB接続情報: postgres:postgres@localhost:5432/daiary
 ```
 
 `backend` サービスは `db` サービスに依存しており、PostgreSQL が起動完了後にバックエンドが起動します。データは `postgres_data` ボリュームに永続化されます。

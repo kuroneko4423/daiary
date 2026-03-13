@@ -6,7 +6,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 
 class ShareService {
-  static const String _shareTempDirName = 'ai_photographer_share';
+  static const String _shareTempDirName = 'daiary_share';
 
   // --- Existing methods ---
 

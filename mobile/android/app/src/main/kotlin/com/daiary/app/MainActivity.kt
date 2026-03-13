@@ -1,4 +1,4 @@
-package com.aiphotographer.ai_photographer
+package com.daiary.app
 
 import io.flutter.embedding.android.FlutterActivity
 

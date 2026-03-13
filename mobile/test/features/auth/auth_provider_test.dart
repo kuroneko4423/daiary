@@ -2,9 +2,9 @@ import 'dart:async';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:ai_photographer/features/auth/presentation/providers/auth_provider.dart';
-import 'package:ai_photographer/features/auth/domain/entities/user.dart';
-import 'package:ai_photographer/features/auth/domain/repositories/auth_repository.dart';
+import 'package:daiary/features/auth/presentation/providers/auth_provider.dart';
+import 'package:daiary/features/auth/domain/entities/user.dart';
+import 'package:daiary/features/auth/domain/repositories/auth_repository.dart';
 
 /// A fake AuthRepository for testing that does not depend on Supabase.
 class FakeAuthRepository implements AuthRepository {

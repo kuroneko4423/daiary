@@ -1,14 +1,14 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:ai_photographer/app.dart';
+import 'package:daiary/app.dart';
 
 void main() {
   testWidgets('App renders without errors', (WidgetTester tester) async {
     await tester.pumpWidget(
       const ProviderScope(
-        child: AIPhotographerApp(),
+        child: DAIaryApp(),
       ),
     );
-    expect(find.text('AI Photographer'), findsOneWidget);
+    expect(find.text('dAIary'), findsOneWidget);
   });
 }

@@ -14,7 +14,7 @@ logging.basicConfig(
 )
 
 app = FastAPI(
-    title="AI Photographer API",
+    title="dAIary API",
     version="1.0.0",
 )
 

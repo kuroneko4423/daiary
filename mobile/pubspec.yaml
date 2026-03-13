@@ -1,5 +1,5 @@
-name: ai_photographer
-description: "AI-powered photography app with hashtag and caption generation"
+name: daiary
+description: "AI-powered photo diary app with hashtag and caption generation"
 publish_to: 'none'
 version: 1.0.0+1
 

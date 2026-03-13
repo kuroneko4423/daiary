@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:ai_photographer/features/album/presentation/providers/album_provider.dart';
-import 'package:ai_photographer/features/album/domain/entities/album.dart';
-import 'package:ai_photographer/features/camera/domain/entities/photo.dart';
+import 'package:daiary/features/album/presentation/providers/album_provider.dart';
+import 'package:daiary/features/album/domain/entities/album.dart';
+import 'package:daiary/features/camera/domain/entities/photo.dart';
 
 void main() {
   group('AlbumListState', () {

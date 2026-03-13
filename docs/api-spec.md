@@ -1,8 +1,8 @@
-# AI Photographer API仕様書
+# dAIary API仕様書
 
 ## 概要
 
-AI Photographerアプリケーションのバックエンド API 仕様です。
+dAIaryアプリケーションのバックエンド API 仕様です。
 FastAPI で構築されており、バージョニングは URL パスプレフィックスで管理します。
 
 | 項目 | 値 |

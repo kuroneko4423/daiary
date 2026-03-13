@@ -34,14 +34,14 @@ class AuthRemoteDataSource {
   Future<void> signInWithGoogle() async {
     await _client.auth.signInWithOAuth(
       OAuthProvider.google,
-      redirectTo: 'io.supabase.aiphotographer://login-callback/',
+      redirectTo: 'io.supabase.daiary://login-callback/',
     );
   }
 
   Future<void> signInWithApple() async {
     await _client.auth.signInWithOAuth(
       OAuthProvider.apple,
-      redirectTo: 'io.supabase.aiphotographer://login-callback/',
+      redirectTo: 'io.supabase.daiary://login-callback/',
     );
   }
 

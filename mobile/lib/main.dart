@@ -10,7 +10,7 @@ void main() async {
   ShareService.cleanupTempShareFiles();
   runApp(
     const ProviderScope(
-      child: AIPhotographerApp(),
+      child: DAIaryApp(),
     ),
   );
 }

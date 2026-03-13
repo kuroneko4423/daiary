@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-AI Photographer - a mobile app combining photo capture with AI-powered content generation (hashtags/captions via Google Gemini API) for social media posting. Monorepo with Flutter mobile app and FastAPI backend, using Supabase for database/auth/storage.
+dAIary - a mobile photo diary app combining photo capture with AI-powered content generation (hashtags/captions via Google Gemini API) for social media posting. Monorepo with Flutter mobile app and FastAPI backend, using Supabase for database/auth/storage.
 
 ## Common Commands
 

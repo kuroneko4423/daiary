@@ -26,7 +26,9 @@
       "Bash(xargs wc -l)",
       "Bash(make mobile-lint)",
       "Bash(flutter test)",
-      "Bash(flutter test test/widget_test.dart)"
+      "Bash(flutter test test/widget_test.dart)",
+      "Bash(grep -r \"AIフォトグラファー\\\\|AI Photographer\\\\|ai_photographer\\\\|AIPhotographer\" /c/Users/Kuroneko4423/Documents/VSCode/workspace/ai-photographer --include=*.json --include=*.gradle --include=*.properties)",
+      "Bash(xargs grep:*)"
     ]
   }
 }

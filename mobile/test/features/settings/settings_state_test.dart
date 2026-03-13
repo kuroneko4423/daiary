@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:ai_photographer/features/settings/domain/entities/app_settings.dart';
+import 'package:daiary/features/settings/domain/entities/app_settings.dart';
 
 void main() {
   group('AppSettings', () {

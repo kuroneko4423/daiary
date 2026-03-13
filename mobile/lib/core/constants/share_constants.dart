@@ -1,10 +1,10 @@
 class ShareTemplates {
   ShareTemplates._();
 
-  static const String appName = 'AI Photographer';
-  static const String defaultHashtag = '#AIPhotographer';
+  static const String appName = 'dAIary';
+  static const String defaultHashtag = '#dAIary';
   static const String defaultShareText =
-      'AIフォトグラファーで作成！\n#AIPhotographer';
+      'dAIaryで作成！\n#dAIary';
 
   /// Build share text combining generated content with default template.
   static String buildShareText({String? hashtags, String? caption}) {

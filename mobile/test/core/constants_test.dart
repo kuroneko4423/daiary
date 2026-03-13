@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:ai_photographer/core/constants/app_constants.dart';
+import 'package:daiary/core/constants/app_constants.dart';
 
 void main() {
   group('AppConstants', () {

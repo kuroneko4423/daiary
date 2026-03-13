@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:ai_photographer/services/api_client.dart';
+import 'package:daiary/services/api_client.dart';
 
 void main() {
   group('ApiClient', () {
