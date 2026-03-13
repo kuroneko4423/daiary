@@ -63,3 +63,4 @@ package-lock.json
 *.aab
 *.ipa
 *.app
+.claude/settings.json

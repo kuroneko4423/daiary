@@ -1,7 +1,9 @@
 {
   "permissions": {
     "allow": [
-      "Bash(python -m ruff check .)"
+      "Bash(python -m ruff check .)",
+      "Bash(find /c/Users/Kuroneko4423/Documents/VSCode/workspace/diary/mobile -name build.gradle -o -name *.properties -o -name pubspec.lock)",
+      "Bash(find /c/Users/Kuroneko4423/Documents/VSCode/workspace/diary -maxdepth 2 -type f -name *release* -o -name *deploy* -o -name *config*)"
     ]
   }
 }
