@@ -1,80 +1,90 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+このファイルは、Claude Code (claude.ai/code) がこのリポジトリのコードを扱う際のガイダンスを提供します。
 
-## Project Overview
+## プロジェクト概要
 
-dAIary - a mobile photo diary app combining photo capture with AI-powered content generation (hashtags/captions via Google Gemini API) for social media posting. Monorepo with Flutter mobile app and FastAPI backend, using Supabase for database/auth/storage.
+dAIary - 写真撮影とAIによるコンテンツ生成（Google Gemini APIを使ったハッシュタグ・キャプション生成）を組み合わせた、SNS投稿向けモバイルフォトダイアリーアプリ。Flutter モバイルアプリと FastAPI バックエンドのモノレポ構成で、データベース・認証・ストレージに Supabase を使用。
 
-## Common Commands
+## よく使うコマンド
 
-### Setup
+### セットアップ
+
 ```bash
-make setup              # Install all dependencies (Flutter + Python)
+make setup              # 全依存関係のインストール（Flutter + Python）
 ```
 
-### Backend (FastAPI, Python 3.12+)
+### バックエンド（FastAPI, Python 3.12+）
+
 ```bash
-make backend-run        # Start dev server (uvicorn, port 8000, auto-reload)
-make backend-test       # Run tests (pytest -v)
-make backend-lint       # Lint (ruff check .)
-cd backend && pytest tests/test_auth.py -v          # Run single test file
-cd backend && pytest tests/test_auth.py::test_name  # Run single test
+make backend-run        # 開発サーバー起動（uvicorn, ポート8000, 自動リロード）
+make backend-test       # テスト実行（pytest -v）
+make backend-lint       # リント（ruff check .）
+cd backend && pytest tests/test_auth.py -v          # 単一テストファイル実行
+cd backend && pytest tests/test_auth.py::test_name  # 単一テスト実行
 ```
 
-### Mobile (Flutter, Dart SDK ^3.8.1)
+### モバイル（Flutter, Dart SDK ^3.8.1）
+
 ```bash
-make mobile-run         # Run Flutter app
-make mobile-test        # Run Flutter tests
-make mobile-lint        # Static analysis (flutter analyze)
-cd mobile && dart run build_runner build --delete-conflicting-outputs  # Code gen (freezed/json_serializable)
+make mobile-run         # Flutterアプリ実行
+make mobile-test        # Flutterテスト実行
+make mobile-lint        # 静的解析（flutter analyze）
+cd mobile && dart run build_runner build --delete-conflicting-outputs  # コード生成（freezed/json_serializable）
 ```
 
-### Database (Supabase)
+### データベース（Supabase）
+
 ```bash
-make db-migrate         # Push migrations (npx supabase db push)
-make db-reset           # Reset database
+make db-migrate         # マイグレーション適用（npx supabase db push）
+make db-reset           # データベースリセット
 ```
 
 ### Docker
+
 ```bash
-make docker-up          # Start backend + postgres (port 8000, 5432)
-make docker-down        # Stop containers
+make docker-up          # バックエンド + postgres 起動（ポート 8000, 5432）
+make docker-down        # コンテナ停止
 ```
 
-## Architecture
+## アーキテクチャ
 
-### Three-tier system
-- **Flutter mobile app** (iOS/Android) → REST API → **FastAPI backend** (Python) → **Supabase** (PostgreSQL + Auth + Storage) + **Google Gemini API**
+### 3層構成
 
-### Backend (`backend/`)
-Layered architecture: API routes (`api/v1/`) → Services (`services/`) → Supabase Client (`config/database.py`)
+- **Flutter モバイルアプリ**（iOS/Android）→ REST API → **FastAPI バックエンド**（Python）→ **Supabase**（PostgreSQL + Auth + Storage）+ **Google Gemini API**
 
-- **Dependency injection** via FastAPI `Depends`: `get_current_user` (JWT auth), `get_supabase` (anon client, RLS enforced), `get_admin_supabase` (service role, RLS bypass), `get_settings_dep`
-- **Middleware chain**: RequestLoggingMiddleware → CORSMiddleware → HTTPBearer JWT auth (per-endpoint)
-- **Settings**: pydantic-settings with `.env` file (`config/settings.py`), singleton `settings` instance
-- **Tests**: pytest-asyncio with `httpx.AsyncClient` + ASGI transport. Auth mocked via `app.dependency_overrides[get_current_user]`. Supabase mocked with `MagicMock` chain pattern (see `tests/conftest.py`)
-- **Ruff config**: target py312, line-length 88, rules E/F/I/N/W/UP (`pyproject.toml`)
+### バックエンド（`backend/`）
 
-### Mobile (`mobile/`)
-Feature-based Clean Architecture with Riverpod state management.
+レイヤードアーキテクチャ: APIルート（`api/v1/`）→ サービス（`services/`）→ Supabaseクライアント（`config/database.py`）
 
-- **Feature structure**: `features/<name>/{data, domain, presentation}` — each feature has entities, repositories (interface + impl), datasources, providers (StateNotifier), screens, widgets
-- **Features**: auth, camera, ai_generate, album, settings
-- **State management**: flutter_riverpod v2 with StateNotifier pattern
-- **Navigation**: go_router with auth guard redirects, ShellRoute for bottom nav (Camera/Photos/Albums/Settings)
-- **Services** (cross-feature): `api_client.dart` (Dio), `supabase_service.dart`, `admob_service.dart`, `purchase_service.dart`, `share_service.dart`
-- **Code generation**: freezed + json_serializable for immutable models, requires `build_runner`
+- **依存性注入**: FastAPI `Depends` による実装 — `get_current_user`（JWT認証）、`get_supabase`（anonクライアント、RLS適用）、`get_admin_supabase`（サービスロール、RLSバイパス）、`get_settings_dep`
+- **ミドルウェアチェーン**: RequestLoggingMiddleware → CORSMiddleware → HTTPBearer JWT認証（エンドポイント単位）
+- **設定管理**: pydantic-settings + `.env` ファイル（`config/settings.py`）、シングルトン `settings` インスタンス
+- **テスト**: pytest-asyncio + `httpx.AsyncClient` + ASGIトランスポート。認証は `app.dependency_overrides[get_current_user]` でモック。Supabaseは `MagicMock` チェーンパターンでモック（`tests/conftest.py` 参照）
+- **Ruff設定**: target py312, line-length 88, ルール E/F/I/N/W/UP（`pyproject.toml`）
 
-### Key Data Flows
-- **Auth**: Mobile → FastAPI → Supabase Auth → JWT issued → stored in flutter_secure_storage → sent as Bearer token
-- **Photo upload**: multipart/form-data → FastAPI validates (JPEG/PNG/WebP/HEIC, 10MB max) → Supabase Storage (`{user_id}/photos/`) → metadata in `photos` table → signed URL returned
-- **AI generation**: JWT + usage check (Free: 10/day, Premium: unlimited) → fetch photo from Storage → Gemini API → result saved to `ai_generations` table
+### モバイル（`mobile/`）
 
-### Environment Variables
-- Backend: copy `backend/.env.example` to `backend/.env` (Supabase URL/keys, Gemini API key, SECRET_KEY, CORS_ORIGINS)
-- Mobile: copy `mobile/.env.example` to `mobile/.env` (Supabase URL/anon key, API base URL, AdMob app IDs)
+Riverpod状態管理を用いたフィーチャーベースのクリーンアーキテクチャ。
 
-## Language
+- **フィーチャー構成**: `features/<name>/{data, domain, presentation}` — 各フィーチャーにエンティティ、リポジトリ（インターフェース + 実装）、データソース、プロバイダー（StateNotifier）、画面、ウィジェットを配置
+- **フィーチャー一覧**: auth, camera, ai_generate, album, settings
+- **状態管理**: flutter_riverpod v2 + StateNotifier パターン
+- **ナビゲーション**: go_router + 認証ガードリダイレクト、ShellRoute によるボトムナビ（カメラ/写真/アルバム/設定）
+- **サービス**（フィーチャー横断）: `api_client.dart`（Dio）、`supabase_service.dart`、`admob_service.dart`、`purchase_service.dart`、`share_service.dart`
+- **コード生成**: freezed + json_serializable（イミュータブルモデル用）、`build_runner` が必要
 
-Project documentation is in Japanese. Code and API are in English.
+### 主要データフロー
+
+- **認証**: モバイル → FastAPI → Supabase Auth → JWT発行 → flutter_secure_storage に保存 → Bearer トークンとして送信
+- **写真アップロード**: multipart/form-data → FastAPI でバリデーション（JPEG/PNG/WebP/HEIC, 最大10MB）→ Supabase Storage（`{user_id}/photos/`）→ メタデータを `photos` テーブルに保存 → 署名付きURLを返却
+- **AI生成**: JWT + 使用回数チェック（Free: 10回/日, Premium: 無制限）→ Storage から写真取得 → Gemini API → 結果を `ai_generations` テーブルに保存
+
+### 環境変数
+
+- バックエンド: `backend/.env.example` を `backend/.env` にコピー（Supabase URL/キー、Gemini APIキー、SECRET_KEY、CORS_ORIGINS）
+- モバイル: `mobile/.env.example` を `mobile/.env` にコピー（Supabase URL/anonキー、APIベースURL、AdMobアプリID）
+
+## 言語
+
+プロジェクトドキュメントは日本語で記述。コードとAPIは英語で記述。
