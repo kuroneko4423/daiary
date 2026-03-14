@@ -3,7 +3,13 @@
     "allow": [
       "Bash(python -m ruff check .)",
       "Bash(find /c/Users/Kuroneko4423/Documents/VSCode/workspace/diary/mobile -name build.gradle -o -name *.properties -o -name pubspec.lock)",
-      "Bash(find /c/Users/Kuroneko4423/Documents/VSCode/workspace/diary -maxdepth 2 -type f -name *release* -o -name *deploy* -o -name *config*)"
+      "Bash(find /c/Users/Kuroneko4423/Documents/VSCode/workspace/diary -maxdepth 2 -type f -name *release* -o -name *deploy* -o -name *config*)",
+      "Bash(find /c/Users/Kuroneko4423/Documents/VSCode/workspace/diary/supabase -type f -name *.sql)",
+      "Bash(python -m pytest tests/test_logging_handler.py -v)",
+      "Bash(ruff check:*)",
+      "Bash(python -m pytest tests/test_request_logging.py -v)",
+      "Bash(echo \"exit: $?\")",
+      "Bash(git add:*)"
     ]
   }
 }

@@ -15,6 +15,7 @@ class Settings(BaseSettings):
     APP_DEBUG: bool = True
     SECRET_KEY: str = ""
     CORS_ORIGINS: str = "http://localhost:3000"
+    LOG_TO_DB: bool = True
 
     @property
     def cors_origins_list(self) -> list[str]:
