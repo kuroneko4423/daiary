@@ -9,7 +9,9 @@
       "Bash(ruff check:*)",
       "Bash(python -m pytest tests/test_request_logging.py -v)",
       "Bash(echo \"exit: $?\")",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)"
     ]
   }
 }
