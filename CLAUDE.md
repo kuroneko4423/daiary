@@ -4,14 +4,14 @@
 
 ## プロジェクト概要
 
-dAIary - 写真撮影とAIによるコンテンツ生成（Google Gemini APIを使ったハッシュタグ・キャプション生成）を組み合わせた、SNS投稿向けモバイルフォトダイアリーアプリ。Flutter モバイルアプリと FastAPI バックエンドのモノレポ構成で、データベース・認証・ストレージに Supabase を使用。
+dAIary - 写真撮影とAIによるコンテンツ生成（Google Gemini APIを使ったハッシュタグ・キャプション生成）を組み合わせた、SNS投稿向けモバイルフォトダイアリーアプリ。Flutter モバイルアプリ、Next.js Webアプリ、FastAPI バックエンドのモノレポ構成で、データベース・認証・ストレージに Supabase を使用。
 
 ## よく使うコマンド
 
 ### セットアップ
 
 ```bash
-make setup              # 全依存関係のインストール（Flutter + Python）
+make setup              # 全依存関係のインストール（Flutter + Python + Node.js）
 ```
 
 ### バックエンド（FastAPI, Python 3.12+）
@@ -33,6 +33,15 @@ make mobile-lint        # 静的解析（flutter analyze）
 cd mobile && dart run build_runner build --delete-conflicting-outputs  # コード生成（freezed/json_serializable）
 ```
 
+### Web（Next.js, Node.js 20+）
+
+```bash
+make web-dev            # 開発サーバー起動（next dev, ポート3000）
+make web-build          # プロダクションビルド
+make web-lint           # リント（eslint）
+make web-test           # テスト実行
+```
+
 ### データベース（Supabase）
 
 ```bash
@@ -43,15 +52,16 @@ make db-reset           # データベースリセット
 ### Docker
 
 ```bash
-make docker-up          # バックエンド + postgres 起動（ポート 8000, 5432）
+make docker-up          # バックエンド + Web + postgres 起動（ポート 8000, 3000, 5432）
 make docker-down        # コンテナ停止
 ```
 
 ## アーキテクチャ
 
-### 3層構成
+### マルチプラットフォーム構成
 
 - **Flutter モバイルアプリ**（iOS/Android）→ REST API → **FastAPI バックエンド**（Python）→ **Supabase**（PostgreSQL + Auth + Storage）+ **Google Gemini API**
+- **Next.js Webアプリ**（ブラウザ）→ REST API → **FastAPI バックエンド**（同上）
 
 ### バックエンド（`backend/`）
 
@@ -74,6 +84,17 @@ Riverpod状態管理を用いたフィーチャーベースのクリーンアー
 - **サービス**（フィーチャー横断）: `api_client.dart`（Dio）、`supabase_service.dart`、`admob_service.dart`、`purchase_service.dart`、`share_service.dart`
 - **コード生成**: freezed + json_serializable（イミュータブルモデル用）、`build_runner` が必要
 
+### Web（`web/`）
+
+Next.js 14+ (App Router) + TypeScript + Tailwind CSS + shadcn/ui。
+
+- **ディレクトリ構成**: `app/(auth)/` — 認証ページ、`app/(main)/` — メイン機能（写真/アルバム/アップロード/設定）
+- **状態管理**: TanStack Query（サーバーステート）+ Zustand（認証・設定のクライアントステート、localStorage永続化）
+- **APIクライアント**: Axios + JWT自動付与インターセプター + 401時自動トークンリフレッシュ（`lib/api/client.ts`）
+- **コンポーネント構成**: `components/{photos,albums,ai,auth,settings,layout}/` — 機能別にグループ化
+- **認証**: Bearer JWT トークン、localStorage に保存、AuthProvider でルートガード
+- **モバイル版との差異**: カメラ撮影→ファイルアップロード（D&D）、AdMob広告なし、課金はステータス表示のみ
+
 ### 主要データフロー
 
 - **認証**: モバイル → FastAPI → Supabase Auth → JWT発行 → flutter_secure_storage に保存 → Bearer トークンとして送信
@@ -84,6 +105,7 @@ Riverpod状態管理を用いたフィーチャーベースのクリーンアー
 
 - バックエンド: `backend/.env.example` を `backend/.env` にコピー（Supabase URL/キー、Gemini APIキー、SECRET_KEY、CORS_ORIGINS）
 - モバイル: `mobile/.env.example` を `mobile/.env` にコピー（Supabase URL/anonキー、APIベースURL、AdMobアプリID）
+- Web: `web/.env.example` を `web/.env.local` にコピー（APIベースURL）
 
 ## 言語
 

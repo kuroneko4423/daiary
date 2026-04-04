@@ -10,6 +10,17 @@ services:
     depends_on:
       - db
 
+  web:
+    build:
+      context: ./web
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_API_BASE_URL=http://backend:8000/api/v1
+    depends_on:
+      - backend
+
   db:
     image: postgres:15-alpine
     ports:

@@ -54,9 +54,13 @@ docker-compose.override.yml
 supabase/.temp/
 supabase/.branches/
 
+# ==== Next.js / Web ====
+web/.next/
+web/out/
+web/node_modules/
+
 # ==== Node (for tooling) ====
 node_modules/
-package-lock.json
 
 # ==== Build artifacts ====
 *.apk

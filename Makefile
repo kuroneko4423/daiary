@@ -1,5 +1,6 @@
 .PHONY: setup mobile-run mobile-test mobile-lint mobile-build-apk mobile-build-ios \
        backend-run backend-test backend-lint \
+       web-setup web-dev web-build web-test web-lint \
        db-migrate db-reset db-seed \
        docker-up docker-down clean
 
@@ -7,6 +8,7 @@
 setup:
 	cd mobile && flutter pub get
 	cd backend && pip install -r requirements.txt
+	cd web && npm install
 
 # ==== Mobile (Flutter) ====
 mobile-run:
@@ -34,6 +36,22 @@ backend-test:
 backend-lint:
 	cd backend && ruff check .
 
+# ==== Web (Next.js) ====
+web-setup:
+	cd web && npm install
+
+web-dev:
+	cd web && npm run dev
+
+web-build:
+	cd web && npm run build
+
+web-test:
+	cd web && npm test
+
+web-lint:
+	cd web && npm run lint
+
 # ==== Database (Supabase) ====
 db-migrate:
 	npx supabase db push
@@ -55,3 +73,4 @@ docker-down:
 clean:
 	cd mobile && flutter clean
 	cd backend && rm -rf __pycache__ .pytest_cache .ruff_cache htmlcov .coverage
+	cd web && rm -rf .next node_modules
