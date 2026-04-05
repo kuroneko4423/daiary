@@ -3,6 +3,7 @@
 import { useAuthStore } from "@/lib/stores/auth-store";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
+import { SplashScreen } from "@/components/splash-screen";
 
 export default function Home() {
   const { isAuthenticated } = useAuthStore();
@@ -16,9 +17,5 @@ export default function Home() {
     }
   }, [isAuthenticated, router]);
 
-  return (
-    <div className="flex h-screen items-center justify-center">
-      <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
-    </div>
-  );
+  return <SplashScreen />;
 }

@@ -3,6 +3,7 @@
 import { useAuthStore } from "@/lib/stores/auth-store";
 import { useRouter, usePathname } from "next/navigation";
 import { useEffect, useSyncExternalStore } from "react";
+import { SplashScreen } from "@/components/splash-screen";
 
 const PUBLIC_PATHS = ["/login", "/signup", "/password-reset"];
 
@@ -29,11 +30,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [isAuthenticated, pathname, router, mounted]);
 
   if (!mounted) {
-    return (
-      <div className="flex h-screen items-center justify-center">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
-      </div>
-    );
+    return <SplashScreen />;
   }
 
   return <>{children}</>;

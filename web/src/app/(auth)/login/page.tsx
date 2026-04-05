@@ -1,16 +1,15 @@
 import Link from "next/link";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader } from "@/components/ui/card";
 import { LoginForm } from "@/components/auth/login-form";
-import { Camera } from "lucide-react";
+import { BrandLogo } from "@/components/brand-logo";
 
 export default function LoginPage() {
   return (
     <Card>
       <CardHeader className="text-center">
         <div className="flex justify-center mb-2">
-          <Camera className="h-10 w-10 text-primary" />
+          <BrandLogo size="sm" showTagline={false} />
         </div>
-        <CardTitle className="text-2xl">dAIary</CardTitle>
         <CardDescription>アカウントにログイン</CardDescription>
       </CardHeader>
       <CardContent>
