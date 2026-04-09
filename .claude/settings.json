@@ -11,7 +11,14 @@
       "Bash(echo \"exit: $?\")",
       "Bash(git add:*)",
       "Bash(git commit:*)",
-      "Bash(git push:*)"
+      "Bash(git push:*)",
+      "Bash(npx create-next-app@latest web --typescript --tailwind --eslint --app --src-dir --import-alias \"@/*\" --use-npm --yes)",
+      "Bash(npm install:*)",
+      "Bash(npx shadcn@latest init -d --style default --base-color neutral)",
+      "Bash(npx shadcn@latest init -d)",
+      "Bash(npx shadcn@latest add card input label dialog dropdown-menu tabs toast avatar badge separator skeleton sheet scroll-area select switch textarea popover -y)",
+      "Bash(npx shadcn@latest add card input label dialog dropdown-menu tabs sonner avatar badge separator skeleton sheet scroll-area select switch textarea popover tooltip -y)",
+      "Bash(npm run:*)"
     ]
   }
 }
