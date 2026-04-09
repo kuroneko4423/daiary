@@ -81,7 +81,37 @@ class _AIGenerateScreenState extends ConsumerState<AIGenerateScreen> {
                   fit: BoxFit.cover,
                 ),
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: 16),
+            ],
+
+            // Model not downloaded banner
+            if (!aiState.isModelReady) ...[
+              Card(
+                color: theme.colorScheme.secondaryContainer,
+                child: Padding(
+                  padding: const EdgeInsets.all(12),
+                  child: Row(
+                    children: [
+                      Icon(Icons.info_outline,
+                          color: theme.colorScheme.onSecondaryContainer),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Text(
+                          'AI model is not downloaded. Go to Settings > AI Model Management to download.',
+                          style: TextStyle(
+                              color: theme.colorScheme.onSecondaryContainer),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      TextButton(
+                        onPressed: () => context.go('/settings'),
+                        child: const Text('Settings'),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
             ],
 
             // Style selector
@@ -141,7 +171,7 @@ class _AIGenerateScreenState extends ConsumerState<AIGenerateScreen> {
               children: [
                 Expanded(
                   child: FilledButton.icon(
-                    onPressed: aiState.isLoadingHashtags
+                    onPressed: aiState.isLoadingHashtags || !aiState.isModelReady
                         ? null
                         : () => _generateHashtags(),
                     icon: aiState.isLoadingHashtags
@@ -158,7 +188,7 @@ class _AIGenerateScreenState extends ConsumerState<AIGenerateScreen> {
                 const SizedBox(width: 12),
                 Expanded(
                   child: FilledButton.icon(
-                    onPressed: aiState.isLoadingCaption
+                    onPressed: aiState.isLoadingCaption || !aiState.isModelReady
                         ? null
                         : () => _generateCaption(),
                     icon: aiState.isLoadingCaption

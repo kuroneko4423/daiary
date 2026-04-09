@@ -1,3 +1,4 @@
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -46,7 +47,22 @@ class OnboardingNotifier extends StateNotifier<OnboardingState> {
     }
   }
 
-  Future<void> downloadModel() async {
+  Future<bool> isOnWifi() async {
+    final result = await Connectivity().checkConnectivity();
+    return result.contains(ConnectivityResult.wifi);
+  }
+
+  Future<void> downloadModel({bool skipWifiCheck = false}) async {
+    if (!skipWifiCheck) {
+      final onWifi = await isOnWifi();
+      if (!onWifi) {
+        state = state.copyWith(
+          error: 'wifi_required',
+        );
+        return;
+      }
+    }
+
     state = state.copyWith(isDownloading: true, downloadProgress: 0.0, error: null);
 
     try {

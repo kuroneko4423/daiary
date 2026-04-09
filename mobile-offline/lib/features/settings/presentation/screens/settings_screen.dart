@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import '../../../../services/database_service.dart';
+import '../../../album/presentation/providers/photo_provider.dart';
 import '../providers/settings_provider.dart';
+import '../providers/storage_provider.dart';
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
@@ -61,11 +64,7 @@ class SettingsScreen extends ConsumerWidget {
 
           // Storage section
           _buildSectionHeader(context, 'Storage'),
-          ListTile(
-            leading: const Icon(Icons.storage),
-            title: const Text('Storage Usage'),
-            subtitle: const Text('Local storage'),
-          ),
+          _buildStorageTile(ref),
           const Divider(),
 
           // Data management
@@ -96,6 +95,32 @@ class SettingsScreen extends ConsumerWidget {
 
           const SizedBox(height: 24),
         ],
+      ),
+    );
+  }
+
+  static String _formatBytes(int bytes) {
+    if (bytes < 1024) return '$bytes B';
+    if (bytes < 1024 * 1024) return '${(bytes / 1024).toStringAsFixed(1)} KB';
+    if (bytes < 1024 * 1024 * 1024) {
+      return '${(bytes / (1024 * 1024)).toStringAsFixed(1)} MB';
+    }
+    return '${(bytes / (1024 * 1024 * 1024)).toStringAsFixed(1)} GB';
+  }
+
+  Widget _buildStorageTile(WidgetRef ref) {
+    final storageAsync = ref.watch(storageUsageProvider);
+    return ListTile(
+      leading: const Icon(Icons.storage),
+      title: const Text('Storage Usage'),
+      subtitle: storageAsync.when(
+        data: (usage) => Text(
+          '${_formatBytes(usage.totalBytes)} '
+          '(Photos: ${_formatBytes(usage.photosBytes)}, '
+          'Thumbnails: ${_formatBytes(usage.thumbnailsBytes)})',
+        ),
+        loading: () => const Text('Calculating...'),
+        error: (_, __) => const Text('Unable to calculate'),
       ),
     );
   }
@@ -263,11 +288,25 @@ class SettingsScreen extends ConsumerWidget {
             child: const Text('Cancel'),
           ),
           FilledButton(
-            onPressed: () {
+            onPressed: () async {
               Navigator.pop(context);
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('All data cleared')),
-              );
+              try {
+                await DatabaseService.clearAllData();
+                // Refresh photo list and storage usage
+                ref.invalidate(photoListNotifierProvider);
+                ref.invalidate(storageUsageProvider);
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('All data cleared')),
+                  );
+                }
+              } catch (e) {
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Failed to clear data: $e')),
+                  );
+                }
+              }
             },
             style: FilledButton.styleFrom(
               backgroundColor: Theme.of(context).colorScheme.error,

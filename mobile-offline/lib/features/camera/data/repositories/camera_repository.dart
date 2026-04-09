@@ -1,4 +1,6 @@
 import 'dart:io';
+import 'dart:ui' as ui;
+import 'package:exif/exif.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
@@ -41,8 +43,39 @@ class CameraRepository {
     await sourceFile.copy(destPath);
 
     // Get file info
-    final fileSize = await File(destPath).length();
+    final destFile = File(destPath);
+    final fileSize = await destFile.length();
     final originalFilename = p.basename(sourcePath);
+
+    // Extract EXIF data
+    Map<String, dynamic>? exifData;
+    try {
+      final bytes = await destFile.readAsBytes();
+      final tags = await readExifFromBytes(bytes);
+      if (tags.isNotEmpty) {
+        final exifMap = <String, dynamic>{};
+        for (final entry in tags.entries) {
+          exifMap[entry.key] = entry.value.toString();
+        }
+        exifData = exifMap;
+      }
+    } catch (_) {
+      // Continue without EXIF data
+    }
+
+    // Get image dimensions using dart:ui (lightweight, header-only decode)
+    int? width;
+    int? height;
+    try {
+      final bytes = await destFile.readAsBytes();
+      final codec = await ui.instantiateImageCodec(bytes);
+      final frame = await codec.getNextFrame();
+      width = frame.image.width;
+      height = frame.image.height;
+      frame.image.dispose();
+    } catch (_) {
+      // Continue without dimensions
+    }
 
     // Generate thumbnail
     String? thumbnailPath;
@@ -60,6 +93,9 @@ class CameraRepository {
       thumbnailPath: thumbnailPath,
       originalFilename: originalFilename,
       fileSize: fileSize,
+      width: width,
+      height: height,
+      exifData: exifData,
       createdAt: now,
     );
 

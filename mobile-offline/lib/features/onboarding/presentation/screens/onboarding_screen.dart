@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import '../../../../config/router.dart';
 import '../providers/onboarding_provider.dart';
 
 class OnboardingScreen extends ConsumerStatefulWidget {
@@ -108,11 +111,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
               SizedBox(
                 width: double.infinity,
                 child: FilledButton.icon(
-                  onPressed: () {
-                    ref
-                        .read(onboardingNotifierProvider.notifier)
-                        .downloadModel();
-                  },
+                  onPressed: () => _startDownload(),
                   icon: const Icon(Icons.download),
                   label: const Text('Download Model (~1 GB)'),
                 ),
@@ -135,7 +134,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
               SizedBox(
                 width: double.infinity,
                 child: FilledButton(
-                  onPressed: () => Navigator.of(context).pop(),
+                  onPressed: () => _completeOnboarding(),
                   child: const Text('Done'),
                 ),
               ),
@@ -160,5 +159,48 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
         ),
       ),
     );
+  }
+
+  Future<void> _startDownload() async {
+    final notifier = ref.read(onboardingNotifierProvider.notifier);
+    final onWifi = await notifier.isOnWifi();
+
+    if (!onWifi && mounted) {
+      final proceed = await showDialog<bool>(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('No Wi-Fi Connection'),
+          content: const Text(
+            'You are not connected to Wi-Fi. '
+            'The model download is approximately 1 GB. '
+            'Do you want to continue using mobile data?',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: const Text('Cancel'),
+            ),
+            FilledButton(
+              onPressed: () => Navigator.of(context).pop(true),
+              child: const Text('Continue'),
+            ),
+          ],
+        ),
+      );
+
+      if (proceed != true) return;
+      notifier.downloadModel(skipWifiCheck: true);
+    } else {
+      notifier.downloadModel(skipWifiCheck: true);
+    }
+  }
+
+  Future<void> _completeOnboarding() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('has_completed_onboarding', true);
+    ref.invalidate(hasCompletedOnboardingProvider);
+    if (mounted) {
+      context.go('/camera');
+    }
   }
 }

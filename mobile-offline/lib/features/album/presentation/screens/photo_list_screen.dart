@@ -172,6 +172,16 @@ class _PhotoListScreenState extends ConsumerState<PhotoListScreen> {
               child: Image.file(
                 File(photo.thumbnailPath ?? photo.localPath),
                 fit: BoxFit.cover,
+                cacheWidth: 112,
+                frameBuilder: (context, child, frame, wasSynchronouslyLoaded) {
+                  if (wasSynchronouslyLoaded) return child;
+                  return AnimatedOpacity(
+                    opacity: frame == null ? 0 : 1,
+                    duration: const Duration(milliseconds: 300),
+                    curve: Curves.easeOut,
+                    child: child,
+                  );
+                },
                 errorBuilder: (_, __, ___) => Container(
                   color: Theme.of(context).colorScheme.surfaceContainerHighest,
                   child: const Icon(Icons.photo),
@@ -226,6 +236,16 @@ class _PhotoListScreenState extends ConsumerState<PhotoListScreen> {
           Image.file(
             File(photo.thumbnailPath ?? photo.localPath),
             fit: BoxFit.cover,
+            cacheWidth: 300,
+            frameBuilder: (context, child, frame, wasSynchronouslyLoaded) {
+              if (wasSynchronouslyLoaded) return child;
+              return AnimatedOpacity(
+                opacity: frame == null ? 0 : 1,
+                duration: const Duration(milliseconds: 300),
+                curve: Curves.easeOut,
+                child: child,
+              );
+            },
             errorBuilder: (_, __, ___) => Container(
               color: theme.colorScheme.surfaceContainerHighest,
               child: const Icon(Icons.photo),

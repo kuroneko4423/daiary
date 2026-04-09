@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/widgets/app_error_widget.dart';
 import '../../../../core/widgets/loading_widget.dart';
 import '../providers/album_provider.dart';
+import '../providers/photo_provider.dart';
 import '../widgets/album_card.dart';
 
 class AlbumListScreen extends ConsumerStatefulWidget {
@@ -14,12 +15,38 @@ class AlbumListScreen extends ConsumerStatefulWidget {
 }
 
 class _AlbumListScreenState extends ConsumerState<AlbumListScreen> {
+  final Map<String, String> _coverPhotoPaths = {};
+
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(albumListNotifierProvider.notifier).loadAlbums();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await ref.read(albumListNotifierProvider.notifier).loadAlbums();
+      _resolveCoverPhotoPaths();
     });
+  }
+
+  Future<void> _resolveCoverPhotoPaths() async {
+    final albums = ref.read(albumListNotifierProvider).albums;
+    final dataSource = ref.read(photoLocalDataSourceProvider);
+    final paths = <String, String>{};
+    for (final album in albums) {
+      if (album.coverPhotoId != null) {
+        final photo = await dataSource.getPhoto(album.coverPhotoId!);
+        if (photo != null) {
+          final path = (photo['thumbnail_path'] as String?) ??
+              (photo['local_path'] as String);
+          paths[album.id] = path;
+        }
+      }
+    }
+    if (mounted) {
+      setState(() {
+        _coverPhotoPaths
+          ..clear()
+          ..addAll(paths);
+      });
+    }
   }
 
   @override
@@ -54,8 +81,10 @@ class _AlbumListScreenState extends ConsumerState<AlbumListScreen> {
     }
 
     return RefreshIndicator(
-      onRefresh: () =>
-          ref.read(albumListNotifierProvider.notifier).loadAlbums(),
+      onRefresh: () async {
+        await ref.read(albumListNotifierProvider.notifier).loadAlbums();
+        await _resolveCoverPhotoPaths();
+      },
       child: GridView.builder(
         padding: const EdgeInsets.all(12),
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -69,6 +98,7 @@ class _AlbumListScreenState extends ConsumerState<AlbumListScreen> {
           final album = albumState.albums[index];
           return AlbumCard(
             album: album,
+            coverPhotoPath: _coverPhotoPaths[album.id],
             onTap: () => context.go('/albums/${album.id}'),
             onLongPress: () => _showDeleteConfirmation(album.id, album.name),
           );

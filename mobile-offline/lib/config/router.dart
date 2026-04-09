@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../features/ai_generate/presentation/screens/ai_generate_screen.dart';
 import '../features/album/presentation/screens/album_detail_screen.dart';
@@ -11,9 +12,25 @@ import '../features/camera/presentation/screens/camera_screen.dart';
 import '../features/settings/presentation/screens/settings_screen.dart';
 import '../features/onboarding/presentation/screens/onboarding_screen.dart';
 
+final hasCompletedOnboardingProvider = FutureProvider<bool>((ref) async {
+  final prefs = await SharedPreferences.getInstance();
+  return prefs.getBool('has_completed_onboarding') ?? false;
+});
+
 final routerProvider = Provider<GoRouter>((ref) {
+  final onboardingAsync = ref.watch(hasCompletedOnboardingProvider);
+
   return GoRouter(
     initialLocation: '/camera',
+    redirect: (context, state) {
+      final hasCompleted = onboardingAsync.valueOrNull ?? false;
+      final isOnboarding = state.matchedLocation == '/onboarding';
+
+      if (!hasCompleted && !isOnboarding) {
+        return '/onboarding';
+      }
+      return null;
+    },
     routes: [
       ShellRoute(
         builder: (context, state, child) => MainShell(child: child),

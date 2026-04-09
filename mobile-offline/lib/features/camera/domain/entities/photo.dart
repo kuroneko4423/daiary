@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 class Photo {
   final String id;
   final String localPath;
@@ -64,6 +66,10 @@ class Photo {
       fileSize: map['file_size'] as int?,
       width: map['width'] as int?,
       height: map['height'] as int?,
+      exifData: map['exif_data'] != null
+          ? Map<String, dynamic>.from(
+              jsonDecode(map['exif_data'] as String) as Map)
+          : null,
       aiTags: map['ai_tags'] != null
           ? (map['ai_tags'] as String).split(',').where((s) => s.isNotEmpty).toList()
           : null,
@@ -84,6 +90,7 @@ class Photo {
       'file_size': fileSize,
       'width': width,
       'height': height,
+      'exif_data': exifData != null ? jsonEncode(exifData) : null,
       'ai_tags': aiTags?.join(','),
       'is_favorite': isFavorite ? 1 : 0,
       'deleted_at': deletedAt?.toIso8601String(),

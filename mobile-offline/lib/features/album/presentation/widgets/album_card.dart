@@ -1,14 +1,17 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import '../../domain/entities/album.dart';
 
 class AlbumCard extends StatelessWidget {
   final Album album;
+  final String? coverPhotoPath;
   final VoidCallback? onTap;
   final VoidCallback? onLongPress;
 
   const AlbumCard({
     super.key,
     required this.album,
+    this.coverPhotoPath,
     this.onTap,
     this.onLongPress,
   });
@@ -29,8 +32,17 @@ class AlbumCard extends StatelessWidget {
               child: Container(
                 width: double.infinity,
                 color: theme.colorScheme.surfaceContainerHighest,
-                child: album.coverPhotoId != null
-                    ? const Icon(Icons.photo, size: 48)
+                child: coverPhotoPath != null
+                    ? Image.file(
+                        File(coverPhotoPath!),
+                        fit: BoxFit.cover,
+                        width: double.infinity,
+                        errorBuilder: (_, __, ___) => Icon(
+                          Icons.photo_album,
+                          size: 48,
+                          color: theme.colorScheme.outline,
+                        ),
+                      )
                     : Icon(
                         Icons.photo_album,
                         size: 48,

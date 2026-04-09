@@ -97,4 +97,36 @@ class PhotoLocalDataSource {
     );
     return (result.first['total'] as int?) ?? 0;
   }
+
+  Future<int> cleanupExpiredPhotos({int daysThreshold = 30}) async {
+    final db = await _db;
+    final cutoff = DateTime.now()
+        .subtract(Duration(days: daysThreshold))
+        .toIso8601String();
+    final expired = await db.query(
+      'photos',
+      where: 'deleted_at IS NOT NULL AND deleted_at <= ?',
+      whereArgs: [cutoff],
+    );
+
+    for (final photo in expired) {
+      final localPath = photo['local_path'] as String?;
+      final thumbPath = photo['thumbnail_path'] as String?;
+      if (localPath != null) {
+        final file = File(localPath);
+        if (await file.exists()) await file.delete();
+      }
+      if (thumbPath != null) {
+        final file = File(thumbPath);
+        if (await file.exists()) await file.delete();
+      }
+    }
+
+    final count = await db.delete(
+      'photos',
+      where: 'deleted_at IS NOT NULL AND deleted_at <= ?',
+      whereArgs: [cutoff],
+    );
+    return count;
+  }
 }

@@ -4,7 +4,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/widgets/app_error_widget.dart';
 import '../../../../core/widgets/loading_widget.dart';
+import '../../../camera/domain/entities/photo.dart';
 import '../providers/album_provider.dart';
+import '../providers/photo_provider.dart';
 
 class AlbumDetailScreen extends ConsumerStatefulWidget {
   final String albumId;
@@ -172,8 +174,19 @@ class _AlbumDetailScreenState extends ConsumerState<AlbumDetailScreen> {
   }
 
   void _showAddPhotosDialog() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Select photos to add from your library')),
+    final detailState =
+        ref.read(albumDetailNotifierProvider(widget.albumId));
+    final existingPhotoIds =
+        detailState.photos.map((p) => p.id).toSet();
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      useSafeArea: true,
+      builder: (context) => _AddPhotosSheet(
+        albumId: widget.albumId,
+        existingPhotoIds: existingPhotoIds,
+      ),
     );
   }
 
@@ -204,5 +217,197 @@ class _AlbumDetailScreenState extends ConsumerState<AlbumDetailScreen> {
         ],
       ),
     );
+  }
+}
+
+class _AddPhotosSheet extends ConsumerStatefulWidget {
+  final String albumId;
+  final Set<String> existingPhotoIds;
+
+  const _AddPhotosSheet({
+    required this.albumId,
+    required this.existingPhotoIds,
+  });
+
+  @override
+  ConsumerState<_AddPhotosSheet> createState() => _AddPhotosSheetState();
+}
+
+class _AddPhotosSheetState extends ConsumerState<_AddPhotosSheet> {
+  final Set<String> _selectedIds = {};
+  List<Photo>? _allPhotos;
+  bool _isLoading = true;
+  String? _error;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadPhotos();
+  }
+
+  Future<void> _loadPhotos() async {
+    try {
+      final dataSource = ref.read(photoLocalDataSourceProvider);
+      final data = await dataSource.getPhotos();
+      final photos = data.map((e) => Photo.fromMap(e)).toList();
+      setState(() {
+        _allPhotos = photos
+            .where((p) => !widget.existingPhotoIds.contains(p.id))
+            .toList();
+        _isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        _error = e.toString();
+        _isLoading = false;
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return DraggableScrollableSheet(
+      initialChildSize: 0.9,
+      minChildSize: 0.5,
+      maxChildSize: 0.95,
+      expand: false,
+      builder: (context, scrollController) => Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 12, 8, 8),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    'Add Photos',
+                    style: theme.textTheme.titleLarge,
+                  ),
+                ),
+                if (_selectedIds.isNotEmpty)
+                  Text(
+                    '${_selectedIds.length} selected',
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: theme.colorScheme.primary,
+                    ),
+                  ),
+                const SizedBox(width: 8),
+                IconButton(
+                  onPressed: () => Navigator.pop(context),
+                  icon: const Icon(Icons.close),
+                ),
+              ],
+            ),
+          ),
+          const Divider(height: 1),
+          Expanded(child: _buildContent(scrollController)),
+          if (_selectedIds.isNotEmpty)
+            SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: SizedBox(
+                  width: double.infinity,
+                  child: FilledButton(
+                    onPressed: _addSelectedPhotos,
+                    child: Text('Add ${_selectedIds.length} photo${_selectedIds.length == 1 ? '' : 's'}'),
+                  ),
+                ),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildContent(ScrollController scrollController) {
+    if (_isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    if (_error != null) {
+      return Center(child: Text('Error: $_error'));
+    }
+
+    final photos = _allPhotos!;
+    if (photos.isEmpty) {
+      return Center(
+        child: Text(
+          'No photos available to add',
+          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                color: Theme.of(context).colorScheme.outline,
+              ),
+        ),
+      );
+    }
+
+    return GridView.builder(
+      controller: scrollController,
+      padding: const EdgeInsets.all(4),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 3,
+        crossAxisSpacing: 2,
+        mainAxisSpacing: 2,
+      ),
+      itemCount: photos.length,
+      itemBuilder: (context, index) {
+        final photo = photos[index];
+        final isSelected = _selectedIds.contains(photo.id);
+
+        return GestureDetector(
+          onTap: () {
+            setState(() {
+              if (isSelected) {
+                _selectedIds.remove(photo.id);
+              } else {
+                _selectedIds.add(photo.id);
+              }
+            });
+          },
+          child: Stack(
+            fit: StackFit.expand,
+            children: [
+              Image.file(
+                File(photo.thumbnailPath ?? photo.localPath),
+                fit: BoxFit.cover,
+                errorBuilder: (_, __, ___) => Container(
+                  color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                  child: const Icon(Icons.photo),
+                ),
+              ),
+              if (isSelected) ...[
+                Container(
+                  color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3),
+                ),
+                Positioned(
+                  top: 4,
+                  right: 4,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).colorScheme.primary,
+                      shape: BoxShape.circle,
+                    ),
+                    padding: const EdgeInsets.all(2),
+                    child: Icon(
+                      Icons.check,
+                      size: 16,
+                      color: Theme.of(context).colorScheme.onPrimary,
+                    ),
+                  ),
+                ),
+              ],
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  void _addSelectedPhotos() {
+    if (_selectedIds.isEmpty) return;
+    ref
+        .read(albumDetailNotifierProvider(widget.albumId).notifier)
+        .addPhotos(_selectedIds.toList());
+    Navigator.pop(context);
   }
 }

@@ -1,3 +1,5 @@
+import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
@@ -6,6 +8,9 @@ class DatabaseService {
   static Database? _database;
   static const _dbName = 'daiary.db';
   static const _dbVersion = 1;
+
+  @visibleForTesting
+  static set testDatabase(Database? db) => _database = db;
 
   static Future<Database> get database async {
     if (_database != null) return _database!;
@@ -95,6 +100,29 @@ class DatabaseService {
 
   static Future<void> initialize() async {
     await database;
+  }
+
+  static Future<void> clearAllData() async {
+    final db = await database;
+
+    // Delete in order respecting foreign key constraints
+    await db.delete('ai_generations');
+    await db.delete('album_photos');
+    await db.delete('albums');
+    await db.delete('photos');
+
+    // Delete photo and thumbnail files
+    final documentsDir = await getApplicationDocumentsDirectory();
+    final photosDir = Directory(join(documentsDir.path, 'daiary', 'photos'));
+    final thumbsDir =
+        Directory(join(documentsDir.path, 'daiary', 'thumbnails'));
+
+    if (await photosDir.exists()) {
+      await photosDir.delete(recursive: true);
+    }
+    if (await thumbsDir.exists()) {
+      await thumbsDir.delete(recursive: true);
+    }
   }
 
   static Future<void> close() async {
