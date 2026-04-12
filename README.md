@@ -2,11 +2,11 @@
 
 写真で日々を記録し、AIが言葉を添えるフォトダイアリーアプリケーション。生成AIを活用してハッシュタグや投稿文を自動生成し、SNS投稿を効率化します。
 
-本リポジトリは **オンライン版** と **オフライン版** の2つのモバイルアプリを提供します。
+本リポジトリは **オンライン版** と **オフライン版** の2つのモバイルアプリを、共有パッケージを核としたMelosモノレポで管理しています。
 
 ## バージョン比較
 
-|項目|オンライン版 (`mobile/`)|オフライン版 (`mobile-offline/`)|
+|項目|オンライン版 (`apps/online/`)|オフライン版 (`apps/offline/`)|
 |----|----|----|
 |データ保存|Supabase (PostgreSQL)|SQLite (ローカル)|
 |認証|Supabase Auth (Email/OAuth)|なし（シングルユーザー）|
@@ -18,43 +18,49 @@
 
 ## 技術スタック
 
-### オンライン版 (`mobile/`)
+### 共有パッケージ (`packages/shared/`)
 
 |領域|技術|
 |----|----|
-|モバイル|Flutter (Riverpod + GoRouter)|
+|状態管理|flutter_riverpod|
+|ルーティング|go_router|
+|カメラ|camera + image_picker|
+|共有|share_plus|
+
+### オンライン版固有
+
+|領域|技術|
+|----|----|
 |バックエンド|FastAPI (Python)|
 |データベース|Supabase (PostgreSQL)|
 |認証|Supabase Auth|
-|ストレージ|Supabase Storage|
 |AI|Google Gemini API|
 |広告|Google AdMob|
-|CI/CD|GitHub Actions|
 
-### オフライン版 (`mobile-offline/`)
+### オフライン版固有
 
 |領域|技術|
 |----|----|
-|モバイル|Flutter (Riverpod + GoRouter)|
 |データベース|SQLite (sqflite)|
-|ストレージ|ローカルファイルシステム (path_provider)|
 |AI|Gemma 4 E2B (MediaPipe LLM Inference, Platform Channel経由)|
 |EXIF抽出|exif パッケージ|
 |設定永続化|shared_preferences|
 
 ## ディレクトリ構成
 
-```
+```text
 daiary/
-├── mobile/           # Flutter アプリ（オンライン版）
-├── mobile-offline/   # Flutter アプリ（オフライン版）
-├── backend/          # FastAPI サーバー（オンライン版のみ）
-├── web/              # Next.js Web版（オンライン版）
-├── supabase/         # マイグレーション・RLSポリシー
-├── docs/             # 設計ドキュメント・バックログ管理
-├── .github/          # CI/CD ワークフロー
-├── Makefile          # 統一タスクランナー
-└── docker-compose.yml
+├── apps/
+│   ├── online/             # Flutter アプリ（オンライン版）
+│   └── offline/            # Flutter アプリ（オフライン版）
+├── packages/
+│   └── shared/             # 共有 Dart パッケージ
+├── backend/                # FastAPI サーバー（オンライン版）
+├── web/                    # Next.js Web版（オンライン版）
+├── supabase/               # マイグレーション・RLSポリシー
+├── docs/                   # 設計ドキュメント
+├── melos.yaml              # Melos モノレポ設定
+└── pubspec.yaml            # ワークスペースルート
 ```
 
 ## セットアップ
@@ -62,51 +68,55 @@ daiary/
 ### 前提条件
 
 - Flutter SDK 3.x
+- Dart SDK 3.8+
 - Python 3.12+（オンライン版のみ）
 - Docker Desktop（オンライン版のみ）
-- Supabase CLI（オンライン版のみ）
+
+### Melos セットアップ
+
+```bash
+# ルートの依存関係をインストール（Melos含む）
+dart pub get
+
+# 全パッケージの依存解決
+dart run melos bootstrap
+```
 
 ### オンライン版の起動
 
 ```bash
-# 全依存関係のインストール
-make setup
-
-# ローカル開発環境の起動（Docker）
-make docker-up
-
 # バックエンドサーバー起動
 make backend-run
 
 # モバイルアプリ起動
-make mobile-run
+cd apps/online && flutter run
 ```
 
-#### 環境変数
-
-各パッケージの `.env.example` を `.env` にコピーし、値を設定してください。
+環境変数: `backend/.env.example` を `.env` にコピーし値を設定。
 
 ### オフライン版の起動
 
 ```bash
-cd mobile-offline
-flutter pub get
-flutter run
+cd apps/offline && flutter run
 ```
 
-環境変数の設定は不要です。初回起動時にAIモデル（Gemma 4 E2B、約1GB）のダウンロードを求められます。
+環境変数の設定は不要。初回起動時にAIモデル（約1GB）のダウンロードを求められます。
 
-**注意:** 現時点ではネイティブMediaPipe統合はスキャフォールド実装で、プレースホルダーレスポンスを返します。実AI推論にはAndroid/iOS側のMediaPipe Tasks GenAI SDK統合が必要です。詳細は [docs/backlog_daiary.md](docs/backlog_daiary.md) の OL-001〜004 を参照。
+**注意:** ネイティブMediaPipe統合は現在スキャフォールド実装です。詳細は [docs/backlog_daiary.md](docs/backlog_daiary.md) の OL-001〜004 を参照。
 
 ### テスト
 
 ```bash
-# オンライン版
-make backend-test
-make mobile-test
+# 全パッケージの静的解析
+cd packages/shared && flutter analyze
+cd apps/online && flutter analyze
+cd apps/offline && flutter analyze
 
-# オフライン版
-cd mobile-offline && flutter test
+# オフライン版テスト
+cd apps/offline && flutter test
+
+# バックエンド
+make backend-test
 ```
 
 ## ドキュメント
@@ -115,6 +125,7 @@ cd mobile-offline && flutter test
 - [実装計画書](docs/dAIary_実装計画書.md)
 - [アーキテクチャ](docs/architecture.md)
 - [API仕様](docs/api-spec.md)
-- [バックログ管理簿](docs/backlog_daiary.md) — オンライン版・オフライン版の全バックログ
+- [バックログ管理簿](docs/backlog_daiary.md)
+- [リファクタリング計画書](docs/daiary-refactoring-plan.md)
 - [ER図](docs/er-diagram.md)
 - [デプロイガイド](docs/deployment-guide.md)

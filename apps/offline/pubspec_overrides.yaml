@@ -1,0 +1,4 @@
+# melos_managed_dependency_overrides: daiary_shared
+dependency_overrides:
+  daiary_shared:
+    path: ..\\..\\packages\\shared

@@ -1,30 +1,57 @@
-.PHONY: setup mobile-run mobile-test mobile-lint mobile-build-apk mobile-build-ios \
+.PHONY: setup bootstrap analyze test \
+       online-run online-test online-analyze online-build-apk \
+       offline-run offline-test offline-analyze offline-build-apk \
        backend-run backend-test backend-lint \
        web-setup web-dev web-build web-test web-lint \
        db-migrate db-reset db-seed \
        docker-up docker-down clean
 
-# ==== Setup ====
+# ==== Setup (Melos) ====
 setup:
-	cd mobile && flutter pub get
+	dart pub get
+	dart run melos bootstrap
 	cd backend && pip install -r requirements.txt
 	cd web && npm install
 
-# ==== Mobile (Flutter) ====
-mobile-run:
-	cd mobile && flutter run
+bootstrap:
+	dart pub get
+	dart run melos bootstrap
 
-mobile-test:
-	cd mobile && flutter test
+# ==== Shared Package ====
+shared-analyze:
+	cd packages/shared && flutter analyze --no-fatal-infos
 
-mobile-lint:
-	cd mobile && flutter analyze
+# ==== Online App ====
+online-run:
+	cd apps/online && flutter run
 
-mobile-build-apk:
-	cd mobile && flutter build apk --release
+online-test:
+	cd apps/online && flutter test
 
-mobile-build-ios:
-	cd mobile && flutter build ios --release
+online-analyze:
+	cd apps/online && flutter analyze --no-fatal-infos
+
+online-build-apk:
+	cd apps/online && flutter build apk --release
+
+# ==== Offline App ====
+offline-run:
+	cd apps/offline && flutter run
+
+offline-test:
+	cd apps/offline && flutter test
+
+offline-analyze:
+	cd apps/offline && flutter analyze --no-fatal-infos
+
+offline-build-apk:
+	cd apps/offline && flutter build apk --release
+
+# ==== Analyze All ====
+analyze: shared-analyze online-analyze offline-analyze
+
+# ==== Test All ====
+test: offline-test backend-test
 
 # ==== Backend (FastAPI) ====
 backend-run:
@@ -71,6 +98,8 @@ docker-down:
 
 # ==== Clean ====
 clean:
-	cd mobile && flutter clean
+	cd apps/online && flutter clean
+	cd apps/offline && flutter clean
+	cd packages/shared && flutter clean
 	cd backend && rm -rf __pycache__ .pytest_cache .ruff_cache htmlcov .coverage
 	cd web && rm -rf .next node_modules
