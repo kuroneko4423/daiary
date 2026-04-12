@@ -12,9 +12,10 @@
 |認証|Supabase Auth (Email/OAuth)|なし（シングルユーザー）|
 |ストレージ|Supabase Storage|ローカルファイルシステム|
 |AI|Google Gemini API (クラウド)|Gemma 4 E2B (オンデバイス / MediaPipe)|
-|バックエンド|FastAPI サーバー必須|不要（完全オフライン）|
-|広告 / 課金|Google AdMob / IAP|なし|
-|ネットワーク|常時必要|初回モデルDL後は不要|
+|バックエンド|FastAPI サーバー必須|不要|
+|広告|Google AdMob|Google AdMob|
+|課金|IAP|なし|
+|ネットワーク|常時必要|AIモデルDL + 広告配信のみ ※|
 
 ## 技術スタック
 
@@ -43,8 +44,11 @@
 |----|----|
 |データベース|SQLite (sqflite)|
 |AI|Gemma 4 E2B (MediaPipe LLM Inference, Platform Channel経由)|
+|広告|Google AdMob|
 |EXIF抽出|exif パッケージ|
 |設定永続化|shared_preferences|
+
+> ※ オフライン版のネットワーク通信: AIモデルの初回ダウンロード（約1GB）と広告配信（Google AdMob）にのみ使用します。カメラ撮影・写真管理・アルバム・AI生成など、その他の全機能はオフラインで動作します。
 
 ## ディレクトリ構成
 

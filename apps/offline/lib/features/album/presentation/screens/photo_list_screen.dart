@@ -5,6 +5,7 @@ import 'package:daiary_shared/domain/models/photo.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import '../../../settings/presentation/widgets/banner_ad_widget.dart';
 import '../providers/photo_provider.dart';
 
 class PhotoListScreen extends ConsumerStatefulWidget {
@@ -30,6 +31,7 @@ class _PhotoListScreenState extends ConsumerState<PhotoListScreen> {
     final isGrid = ref.watch(photoViewModeProvider);
 
     return Scaffold(
+      bottomNavigationBar: const BannerAdWidget(),
       appBar: AppBar(
         title: const Text('Photos'),
         actions: [

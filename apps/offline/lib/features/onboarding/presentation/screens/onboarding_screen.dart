@@ -54,7 +54,30 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
               ),
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 48),
+            const SizedBox(height: 16),
+            Card(
+              color: theme.colorScheme.surfaceContainerHighest,
+              child: Padding(
+                padding: const EdgeInsets.all(12),
+                child: Row(
+                  children: [
+                    Icon(Icons.wifi, size: 20,
+                        color: theme.colorScheme.onSurfaceVariant),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        'This app uses network for AI model download and ad delivery. '
+                        'All other features work offline.',
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: theme.colorScheme.onSurfaceVariant,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            const SizedBox(height: 32),
 
             // Status card
             Card(

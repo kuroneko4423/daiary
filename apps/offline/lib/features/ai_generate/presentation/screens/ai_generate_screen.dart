@@ -7,6 +7,8 @@ import 'package:daiary_shared/services/share_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import '../../../settings/presentation/providers/ad_provider.dart';
+import '../../../settings/presentation/widgets/banner_ad_widget.dart';
 import '../providers/ai_generate_provider.dart';
 
 class AIGenerateScreen extends ConsumerStatefulWidget {
@@ -44,6 +46,7 @@ class _AIGenerateScreenState extends ConsumerState<AIGenerateScreen> {
     final theme = Theme.of(context);
 
     return Scaffold(
+      bottomNavigationBar: const BannerAdWidget(),
       appBar: AppBar(
         title: const Text('AI Generate'),
         leading: IconButton(
@@ -300,16 +303,17 @@ class _AIGenerateScreenState extends ConsumerState<AIGenerateScreen> {
     );
   }
 
-  void _generateHashtags() {
+  Future<void> _generateHashtags() async {
     final photoPath = widget.photoPath ?? '';
     final language = ref.read(selectedLanguageProvider);
-    ref.read(aiGenerateNotifierProvider.notifier).generateHashtags(
+    await ref.read(aiGenerateNotifierProvider.notifier).generateHashtags(
           photoLocalPath: photoPath,
           language: language,
         );
+    ref.read(adServiceProvider).showInterstitialIfNeeded();
   }
 
-  void _generateCaption() {
+  Future<void> _generateCaption() async {
     final photoPath = widget.photoPath ?? '';
     final language = ref.read(selectedLanguageProvider);
     final style = ref.read(selectedStyleProvider);
@@ -318,13 +322,14 @@ class _AIGenerateScreenState extends ConsumerState<AIGenerateScreen> {
         ? _customPromptController.text
         : null;
 
-    ref.read(aiGenerateNotifierProvider.notifier).generateCaption(
+    await ref.read(aiGenerateNotifierProvider.notifier).generateCaption(
           photoLocalPath: photoPath,
           language: language,
           style: style,
           length: length,
           customPrompt: customPrompt,
         );
+    ref.read(adServiceProvider).showInterstitialIfNeeded();
   }
 
   void _showSnackBar(String message) {
