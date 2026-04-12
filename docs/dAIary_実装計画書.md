@@ -1,7 +1,8 @@
 # dAIary（ダイアリー） 実装計画書
 
-**バージョン:** 1.5  
+**バージョン:** 2.0  
 **作成日:** 2026年3月6日  
+**最終更新:** 2026年4月12日  
 **ステータス:** ドラフト
 
 ---
@@ -50,7 +51,8 @@ main ─── develop ─── feature/xxx
 ### 1.4 モノレポ運用ルール
 
 - CI/CDはパスフィルタにより変更のあったパッケージのみビルド・テストを実行
-  - `mobile/` 配下の変更 → Flutter lint / test / build
+  - `mobile/` 配下の変更 → Flutter lint / test / build（オンライン版）
+  - `mobile-offline/` 配下の変更 → Flutter lint / test / build（オフライン版）
   - `backend/` 配下の変更 → pytest / lint
   - `supabase/` 配下の変更 → マイグレーション検証
 - ルートの `Makefile` から各パッケージの主要操作を統一実行可能
@@ -70,9 +72,10 @@ daiary/                           # リポジトリルート
 ├── .github/
 │   └── workflows/
 │       ├── mobile-ci.yml         # Flutter CI（mobile/変更時のみ）
+│       ├── mobile-offline-ci.yml # Flutter CI（mobile-offline/変更時のみ）
 │       ├── backend-ci.yml        # FastAPI CI（backend/変更時のみ）
 │       └── db-migration.yml      # マイグレーション検証
-├── mobile/                       # Flutter アプリ
+├── mobile/                       # Flutter アプリ（オンライン版）
 │   ├── pubspec.yaml
 │   ├── analysis_options.yaml
 │   ├── .env.example
@@ -80,7 +83,12 @@ daiary/                           # リポジトリルート
 │   ├── test/
 │   ├── integration_test/
 │   └── android/ & ios/
-├── backend/                      # FastAPI サーバー
+├── mobile-offline/               # Flutter アプリ（オフライン版）
+│   ├── pubspec.yaml
+│   ├── lib/
+│   ├── test/
+│   └── android/ & ios/
+├── backend/                      # FastAPI サーバー（オンライン版のみ）
 │   ├── pyproject.toml
 │   ├── requirements.txt
 │   ├── Dockerfile
@@ -109,7 +117,7 @@ daiary/                           # リポジトリルート
 └── docker-compose.yml            # ローカル開発用（backend + Supabase）
 ```
 
-### 2.2 Flutter（mobile/）
+### 2.2 Flutter オンライン版（mobile/）
 
 #### アーキテクチャ: Riverpod + Go Router + Repository Pattern
 
@@ -182,6 +190,116 @@ mobile/lib/
 | freezed / json_serializable | モデル生成 |
 | cached_network_image | 画像キャッシュ |
 | share_plus | OS標準共有シート |
+
+### 2.2A Flutter オフライン版（mobile-offline/）
+
+#### アーキテクチャ: Riverpod + Go Router + Repository Pattern + Platform Channel
+
+オンライン版のClean Architectureを継承し、data層のdatasourceをremote→localに差し替えた構成。バックエンドサーバー不要。
+
+```
+mobile-offline/lib/
+├── main.dart
+├── app.dart
+├── config/
+│   ├── theme.dart            # テーマ定義
+│   └── router.dart           # GoRouter設定（認証なし、初回起動リダイレクト）
+├── core/
+│   ├── constants/
+│   ├── exceptions/
+│   ├── extensions/
+│   ├── utils/
+│   └── widgets/              # 共通ウィジェット
+├── features/
+│   ├── camera/
+│   │   ├── data/
+│   │   │   └── repositories/ # CameraRepository（ローカル保存+DB登録+EXIF抽出+サムネイル生成）
+│   │   ├── domain/
+│   │   │   └── entities/     # Photo（localPath, exifData, width/height）
+│   │   └── presentation/
+│   │       ├── providers/
+│   │       ├── screens/
+│   │       └── widgets/
+│   ├── ai_generate/
+│   │   ├── data/
+│   │   │   ├── datasources/  # AiLocalDataSource（Platform Channel経由）
+│   │   │   ├── models/
+│   │   │   └── repositories/
+│   │   ├── domain/
+│   │   │   ├── entities/
+│   │   │   └── repositories/
+│   │   └── presentation/
+│   │       ├── providers/
+│   │       ├── screens/      # モデル未DL時のUI制御
+│   │       └── widgets/
+│   ├── album/
+│   │   ├── data/
+│   │   │   ├── datasources/  # PhotoLocalDataSource, AlbumLocalDataSource（SQLite）
+│   │   │   ├── models/
+│   │   │   └── repositories/
+│   │   ├── domain/
+│   │   └── presentation/
+│   │       ├── providers/
+│   │       ├── screens/      # 写真追加ピッカーUI、カバー写真表示
+│   │       └── widgets/
+│   ├── settings/
+│   │   ├── data/
+│   │   │   └── repositories/ # SettingsRepository（SharedPreferences）
+│   │   ├── domain/
+│   │   └── presentation/
+│   │       ├── providers/    # SettingsProvider, StorageProvider
+│   │       └── screens/      # ストレージ使用量、全データ削除、AIモデル管理
+│   └── onboarding/
+│       └── presentation/
+│           ├── providers/    # OnboardingNotifier（Wi-Fiチェック、モデルDL管理）
+│           └── screens/      # 初回起動モデルDL画面
+└── services/
+    ├── database_service.dart  # SQLite初期化・マイグレーション・全データ削除
+    ├── ai_model_service.dart  # Gemmaモデル状態確認
+    ├── thumbnail_service.dart # ローカルサムネイル生成
+    └── share_service.dart     # OS共有シート連携
+```
+
+#### ネイティブ側（Platform Channel）
+
+```
+mobile-offline/android/app/src/main/kotlin/.../
+├── MainActivity.kt           # GemmaPlugin登録
+└── GemmaPlugin.kt            # MediaPipe LLM Inference API統合
+
+mobile-offline/ios/Runner/
+├── AppDelegate.swift          # GemmaPlugin登録
+└── GemmaPlugin.swift          # MediaPipe LLM Inference API統合
+```
+
+#### 主要パッケージ（オフライン版）
+
+| パッケージ | 用途 |
+|---|---|
+| flutter_riverpod | 状態管理 |
+| go_router | ルーティング |
+| camera | カメラ制御 |
+| image_picker | フォトライブラリ取り込み |
+| image_cropper | トリミング |
+| sqflite | SQLiteデータベース |
+| path_provider | ローカルファイルパス取得 |
+| uuid | UUID生成 |
+| image | 画像処理・サムネイル生成 |
+| exif | EXIF メタデータ抽出 |
+| shared_preferences | 設定永続化・初回起動フラグ |
+| connectivity_plus | ネットワーク接続状態チェック |
+| share_plus | OS標準共有シート |
+
+#### オンライン版との差分
+
+| 項目 | オンライン版 | オフライン版 |
+|---|---|---|
+| datasource | Remote（Dio HTTP） | Local（SQLite） |
+| 認証 | Supabase Auth | なし（初回起動リダイレクトのみ） |
+| AI呼び出し | REST API → FastAPI → Gemini | Platform Channel → ネイティブMediaPipe |
+| 写真保存 | Supabase Storage | ローカルファイル |
+| 課金/広告 | AdMob + IAP | なし |
+| 画像表示 | CachedNetworkImage | Image.file（cacheWidth最適化） |
 
 ### 2.3 FastAPI（backend/）
 
@@ -306,11 +424,32 @@ backend/
 - **Vercel**: FastAPIをServerless Functionsとしてデプロイ
 - **AWS EC2**: フルコントロールが必要な場合
 
+### 2.6 オフライン版インフラ構成
+
+オフライン版はデプロイ先が不要（アプリ内で完結）。
+
+```text
+┌─ デバイス内 ────────────────────────────┐
+│  Flutter App (Offline)                  │
+│  ├── SQLite (データベース)              │
+│  ├── ローカルファイルシステム (写真)    │
+│  ├── SharedPreferences (設定)           │
+│  └── Platform Channel                  │
+│      └── MediaPipe + Gemma 4 E2B       │
+└─────────────────────────────────────────┘
+         │ (初回のみ)
+         ▼
+┌─ 外部 ─────────────────────────────────┐
+│  AIモデルホスティング (CDN/Kaggle等)    │
+│  └── gemma-4-e2b-it-int4.bin (~1GB)    │
+└─────────────────────────────────────────┘
+```
+
 ---
 
 ## 3. 開発フェーズ・スケジュール
 
-### 3.1 フェーズ概要
+### 3.1 オンライン版フェーズ概要
 
 | フェーズ | 期間 | 内容 |
 |---|---|---|
@@ -416,6 +555,50 @@ backend/
 | ランディングページ作成 | 中 | アプリ紹介サイト |
 | 運用監視設定 | 中 | ログ・アラート・ダッシュボード |
 
+### 3.6 オフライン版フェーズ概要
+
+| フェーズ | 期間 | 内容 |
+|---|---|---|
+| Phase OL-1: 基盤構築 | 1週間 | mobile/からのコピー、SQLite化、認証/課金/広告除去、pubspec更新 |
+| Phase OL-2: ローカルデータ層 | 1週間 | PhotoLocalDataSource、AlbumLocalDataSource、エンティティ改修、provider書き換え |
+| Phase OL-3: カメラ・写真フロー | 1週間 | DB連携、サムネイル生成、EXIF抽出、画像サイズ取得、ゴミ箱クリーンアップ |
+| Phase OL-4: UI/UX・設定 | 1週間 | ルーティング、設定画面、テーマ反映、ストレージ表示、全データ削除 |
+| Phase OL-5: AI統合 | 2週間 | Platform Channel、GemmaPlugin(Android/iOS)、オンボーディング、Wi-Fiチェック |
+| Phase OL-6: テスト・仕上げ | 1週間 | ユニットテスト、画像最適化、エラーハンドリング |
+| 合計 | 約7週間 | |
+
+#### Phase OL-1〜4: 実装済み
+
+基盤構築からUI/UX・設定までの全項目は実装完了。
+
+| 完了項目 | 内容 |
+|---|---|
+| SQLiteスキーマ | 4テーブル + インデックス、DatabaseService |
+| ローカルデータ層 | PhotoLocalDataSource、AlbumLocalDataSource（SQLite CRUD） |
+| カメラ・写真フロー | 撮影→保存→DB登録→サムネイル生成→EXIF抽出→画像サイズ取得 |
+| アルバム機能 | 写真追加ピッカーUI、カバー写真表示 |
+| ルーティング | go_router（認証なし、初回起動リダイレクト） |
+| 設定画面 | テーマ反映、ストレージ使用量表示、全データ削除 |
+| AI UI | モデル未DL時のボタン無効化＋案内バナー |
+| オンボーディング | 初回起動フロー、Wi-Fiチェック、モデルDL画面 |
+| テスト | データ層ユニットテスト（sqflite_common_ffi） |
+| 最適化 | cacheWidth + frameBuilderフェードイン |
+
+#### Phase OL-5: ネイティブAI統合（未実装）
+
+GemmaPlugin.kt / GemmaPlugin.swiftのスキャフォールドは作成済み。MediaPipe Tasks GenAI SDKの実統合が残タスク。
+
+| タスク | 優先度 | 詳細 |
+|---|---|---|
+| Android MediaPipe LLM統合 | 高 | mediapipe-tasks-genai AAR依存追加、LlmInference実装 |
+| iOS MediaPipe LLM統合 | 高 | MediaPipeTasksGenAI Pod追加、LlmInference実装 |
+| Gemmaモデル実ダウンロード | 高 | CDN/Kaggleからの実DL処理、中断・再開対応 |
+| マルチモーダル画像入力 | 高 | 画像+テキストプロンプトのネイティブ処理 |
+| プロンプト最適化 | 中 | Gemma向けJSON出力安定性・日本語品質の調整 |
+| リソース解放 | 中 | アプリバックグラウンド遷移時のメモリ管理 |
+
+> 詳細なバックログは [backlog_daiary.md](backlog_daiary.md) の OL-001〜063 を参照。
+
 ---
 
 ## 4. API設計（主要エンドポイント）
@@ -495,7 +678,7 @@ backend/
 
 ## 5. テスト計画
 
-### 5.1 テスト方針
+### 5.1 テスト方針（オンライン版）
 
 | テスト種別 | 対象 | ツール | カバレッジ目標 |
 |---|---|---|---|
@@ -504,11 +687,29 @@ backend/
 | 統合テスト | API⇔DB⇔外部API | pytest + httpx | 全エンドポイント |
 | E2Eテスト | ユーザーフロー | integration_test | 主要フロー3本 |
 
-### 5.2 主要テストシナリオ
+### 5.2 テスト方針（オフライン版）
+
+| テスト種別 | 対象 | ツール | カバレッジ目標 |
+|---|---|---|---|
+| ユニットテスト | データ層（SQLite CRUD） | Flutter Test + sqflite_common_ffi | DataSource全メソッド |
+| ユニットテスト | リポジトリ層 | Flutter Test + mock | 主要リポジトリ |
+| ウィジェットテスト | Flutter UI | Flutter Widget Test | 主要画面 |
+| 統合テスト | オフライン動作検証 | 手動テスト（機内モード） | 全機能 |
+
+### 5.3 主要テストシナリオ
+
+**オンライン版:**
 
 1. **新規登録→写真撮影→AI生成→クリップボードコピー** の一連フロー
 2. **無料プラン制限** が正しく機能する（AI生成10回/日上限）
 3. **サブスクリプション購入** 後にプレミアム機能が解放される
+
+**オフライン版:**
+
+1. **初回起動→オンボーディング→モデルDL→カメラ撮影→AI生成→シェア** の一連フロー
+2. **機内モード** で全機能（撮影・アルバム・AI生成）が動作することの検証
+3. **ゴミ箱自動クリーンアップ** が30日経過した写真を起動時に削除すること
+4. **AIモデル未DL時** に生成ボタンが無効化され案内バナーが表示されること
 
 ---
 
