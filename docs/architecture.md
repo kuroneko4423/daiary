@@ -41,15 +41,21 @@ dAIary は、Flutter モバイルアプリ、FastAPI バックエンド、Supaba
 プロジェクトはモノレポ構成を採用しており、モバイルアプリ・バックエンド・インフラ定義を単一リポジトリで管理しています。
 
 ```
-daiary/
-├── mobile/              # Flutter モバイルアプリ (iOS / Android)
-├── backend/             # FastAPI バックエンドAPI (Python 3.12)
-├── supabase/            # DBマイグレーション・RLS ポリシー定義 (SQL)
-├── docs/                # 共有ドキュメント (要件定義書、実装計画書、API仕様書等)
-├── .github/workflows/   # CI/CD パイプライン (GitHub Actions)
-├── docker-compose.yml   # ローカル開発用コンテナ定義
-├── Makefile             # 開発用コマンド集
-└── README.md            # プロジェクト概要
+daiary/                          # Melos モノレポ
+├── apps/
+│   ├── online/              # Flutter モバイルアプリ（オンライン版, iOS / Android）
+│   └── offline/             # Flutter モバイルアプリ（オフライン版, iOS / Android）
+├── packages/
+│   └── shared/              # 共有コード (core/, config/theme.dart, services/share_service.dart 等)
+├── backend/                 # FastAPI バックエンドAPI (Python 3.12)
+├── supabase/                # DBマイグレーション・RLS ポリシー定義 (SQL)
+├── docs/                    # 共有ドキュメント (要件定義書、実装計画書、API仕様書等)
+├── .github/workflows/       # CI/CD パイプライン (GitHub Actions)
+├── docker-compose.yml       # ローカル開発用コンテナ定義
+├── melos.yaml               # Melos モノレポ設定
+├── pubspec.yaml             # ルート pubspec（Melos ワークスペース）
+├── Makefile                 # 開発用コマンド集
+└── README.md                # プロジェクト概要
 ```
 
 ---
@@ -447,7 +453,7 @@ GitHub Actions で 3 つのワークフローを運用しています。
 
 #### mobile-ci.yml (Mobile CI)
 
-- **トリガー**: `mobile/` 配下のファイルに対する push / pull_request
+- **トリガー**: `apps/**`, `packages/**` 配下のファイルに対する push / pull_request
 - **環境**: ubuntu-latest, Flutter 3.x (stable)
 - **ステップ**:
   1. 依存パッケージのインストール (`flutter pub get`)

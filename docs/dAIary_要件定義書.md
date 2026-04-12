@@ -17,8 +17,8 @@ dAIary（ダイアリー）は、写真で日々を記録し、AIが言葉を添
 
 | エディション | ディレクトリ | 概要 |
 |---|---|---|
-| **オンライン版** | `mobile/` | Supabase + Gemini APIを使用。認証・クラウド同期・課金機能あり |
-| **オフライン版** | `mobile-offline/` | SQLite + Gemma 4 E2Bを使用。完全オフライン動作。認証・課金・広告なし |
+| **オンライン版** | `apps/online/` | Supabase + Gemini APIを使用。認証・クラウド同期・課金機能あり |
+| **オフライン版** | `apps/offline/` | SQLite + Gemma 4 E2Bを使用。完全オフライン動作。認証・課金・広告なし |
 
 ### 1.2 ターゲットユーザー
 
@@ -40,7 +40,7 @@ dAIary（ダイアリー）は、写真で日々を記録し、AIが言葉を添
 
 ## 2. 機能要件（オンライン版）
 
-> 以下セクション2はオンライン版（`mobile/`）の機能要件である。オフライン版の機能要件はセクション2Aを参照。
+> 以下セクション2はオンライン版（`apps/online/`）の機能要件である。オフライン版の機能要件はセクション2Aを参照。
 
 ### 2.1 カメラ撮影機能
 
@@ -193,7 +193,7 @@ dAIary（ダイアリー）は、写真で日々を記録し、AIが言葉を添
 
 ## 2A. 機能要件（オフライン版）
 
-> オフライン版（`mobile-offline/`）固有の機能要件。認証・課金・広告・クラウド同期は対象外。
+> オフライン版（`apps/offline/`）固有の機能要件。認証・課金・広告・クラウド同期は対象外。
 
 ### 2A.1 カメラ撮影機能
 
@@ -349,13 +349,18 @@ dAIary（ダイアリー）は、写真で日々を記録し、AIが言葉を添
 モノレポ構成を採用し、モバイル（オンライン/オフライン）・バックエンド・DB定義・ドキュメントを単一リポジトリで管理する。
 
 ```
-daiary/                    # モノレポルート
-├── mobile/               # Flutter アプリ（オンライン版）
-├── mobile-offline/       # Flutter アプリ（オフライン版）
+daiary/                    # Melos モノレポルート
+├── apps/
+│   ├── online/           # Flutter アプリ（オンライン版）
+│   └── offline/          # Flutter アプリ（オフライン版）
+├── packages/
+│   └── shared/           # 共有コード（core/, config/theme.dart, services/share_service.dart 等）
 ├── backend/              # FastAPI サーバー（オンライン版）
 ├── web/                  # Next.js Web版（オンライン版）
 ├── supabase/             # マイグレーション・RLSポリシー
 ├── docs/                 # 共有ドキュメント
+├── melos.yaml            # Melos モノレポ設定
+├── pubspec.yaml          # ルート pubspec（Melos ワークスペース）
 └── docker-compose.yml    # ローカル開発環境
 ```
 

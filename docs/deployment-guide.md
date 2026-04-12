@@ -64,12 +64,12 @@ cp backend/.env.example backend/.env
 | `SECRET_KEY` | JWT 署名用シークレットキー | `openssl rand -hex 32` で生成 |
 | `CORS_ORIGINS` | 許可するオリジン | 開発: `http://localhost:3000` |
 
-### モバイル（`mobile/.env`）
+### モバイル（`apps/online/.env`）
 
-`mobile/.env.example` を `mobile/.env` にコピーして値を設定する。
+`apps/online/.env.example` を `apps/online/.env` にコピーして値を設定する。
 
 ```bash
-cp mobile/.env.example mobile/.env
+cp apps/online/.env.example apps/online/.env
 ```
 
 | 変数名 | 説明 | 取得元 |
@@ -101,7 +101,7 @@ make setup
 ```
 
 これにより以下が実行される:
-- `cd mobile && flutter pub get` — Flutter パッケージ取得
+- `cd apps/online && flutter pub get` — Flutter パッケージ取得
 - `cd backend && pip install -r requirements.txt` — Python パッケージインストール
 
 ### 3.2 コード生成（Flutter）
@@ -109,7 +109,7 @@ make setup
 freezed / json_serializable のコード生成を実行する。
 
 ```bash
-cd mobile && dart run build_runner build --delete-conflicting-outputs
+cd apps/online && dart run build_runner build --delete-conflicting-outputs
 ```
 
 ### 3.3 Docker でローカル環境を起動
@@ -214,7 +214,7 @@ GitHub Actions で 3 つのワークフローが自動実行される。
 
 ### mobile-ci.yml
 
-- **トリガー**: `mobile/**` への push / PR
+- **トリガー**: `apps/**`, `packages/**` への push / PR
 - **環境**: ubuntu-latest, Flutter 3.x（stable）
 - **ステップ**: 依存関係インストール → flutter analyze → flutter test
 
@@ -305,17 +305,17 @@ npx supabase migration new <マイグレーション名>
 
 ### 7.1 共通準備
 
-1. **バージョン更新**: `mobile/pubspec.yaml` の `version` を更新
+1. **バージョン更新**: `apps/online/pubspec.yaml` の `version` を更新
 
 ```yaml
 version: 1.0.1+2    # major.minor.patch+buildNumber
 ```
 
-2. **本番環境変数の設定**: `mobile/.env` の `API_BASE_URL` を本番 URL に変更
+2. **本番環境変数の設定**: `apps/online/.env` の `API_BASE_URL` を本番 URL に変更
 3. **コード生成の実行**:
 
 ```bash
-cd mobile && dart run build_runner build --delete-conflicting-outputs
+cd apps/online && dart run build_runner build --delete-conflicting-outputs
 ```
 
 ### 7.2 Android リリース
@@ -328,7 +328,7 @@ keytool -genkey -v -keystore ~/daiary-release.jks -keyalg RSA -keysize 2048 -val
 
 #### 署名設定
 
-`mobile/android/key.properties` を作成:
+`apps/online/android/key.properties` を作成:
 
 ```properties
 storePassword=<パスワード>
@@ -345,7 +345,7 @@ storeFile=<キーストアのパス>
 make mobile-build-apk
 ```
 
-出力: `mobile/build/app/outputs/flutter-apk/app-release.apk`
+出力: `apps/online/build/app/outputs/flutter-apk/app-release.apk`
 
 #### Google Play Console への提出
 
@@ -365,7 +365,7 @@ make mobile-build-ios
 
 #### Xcode での設定
 
-1. `mobile/ios/Runner.xcworkspace` を Xcode で開く
+1. `apps/online/ios/Runner.xcworkspace` を Xcode で開く
 2. Signing & Capabilities で Apple Developer アカウントを設定
 3. Bundle Identifier、バージョン、ビルド番号を確認
 4. Archive を作成し、App Store Connect にアップロード
@@ -379,7 +379,7 @@ make mobile-build-ios
 
 | 対象 | ファイル | 形式 | 現在値 |
 |------|---------|------|--------|
-| モバイル | `mobile/pubspec.yaml` | `major.minor.patch+buildNumber` | `1.0.0+1` |
+| モバイル | `apps/online/pubspec.yaml` | `major.minor.patch+buildNumber` | `1.0.0+1` |
 | バックエンド | `backend/pyproject.toml` | `major.minor.patch` | `1.0.0` |
 
 リリース時は両方のバージョンを更新し、Git タグ（例: `v1.0.1`）を付与することを推奨。
@@ -390,7 +390,7 @@ make mobile-build-ios
 
 | 問題 | 解決方法 |
 |------|---------|
-| Flutter ビルドエラー | `cd mobile && flutter clean` → `flutter pub get` → 再ビルド |
+| Flutter ビルドエラー | `cd apps/online && flutter clean` → `flutter pub get` → 再ビルド |
 | コード生成の不整合 | `dart run build_runner build --delete-conflicting-outputs` を再実行 |
 | Docker ポート競合 | `docker compose down` で既存コンテナを停止後、再起動 |
 | Supabase 接続エラー | `.env` の `SUPABASE_URL` と `SUPABASE_KEY` が正しいか確認 |

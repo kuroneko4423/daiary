@@ -33,16 +33,16 @@
 ```
 main ─── develop ─── feature/xxx
               │
-              ├──── feature/mobile/cam-001-camera
+              ├──── feature/online/cam-001-camera
               ├──── feature/backend/ai-001-hashtag
-              ├──── feature/mobile/alb-001-album
+              ├──── feature/online/alb-001-album
               ├──── feature/infra/ci-setup
               └──── release/v1.0.0
 ```
 
 - `main`: 本番リリース用
 - `develop`: 開発統合ブランチ
-- `feature/mobile/*`: モバイル機能開発ブランチ
+- `feature/online/*`: オンライン版モバイル機能開発ブランチ
 - `feature/backend/*`: バックエンド機能開発ブランチ
 - `feature/infra/*`: インフラ・CI/CD関連ブランチ
 - `release/*`: リリース候補ブランチ
@@ -51,8 +51,9 @@ main ─── develop ─── feature/xxx
 ### 1.4 モノレポ運用ルール
 
 - CI/CDはパスフィルタにより変更のあったパッケージのみビルド・テストを実行
-  - `mobile/` 配下の変更 → Flutter lint / test / build（オンライン版）
-  - `mobile-offline/` 配下の変更 → Flutter lint / test / build（オフライン版）
+  - `apps/online/` 配下の変更 → Flutter lint / test / build（オンライン版）
+  - `apps/offline/` 配下の変更 → Flutter lint / test / build（オフライン版）
+  - `packages/shared/` 配下の変更 → 両版の Flutter lint / test / build
   - `backend/` 配下の変更 → pytest / lint
   - `supabase/` 配下の変更 → マイグレーション検証
 - ルートの `Makefile` から各パッケージの主要操作を統一実行可能
@@ -66,28 +67,35 @@ main ─── develop ─── feature/xxx
 ### 2.1 モノレポ全体構成
 
 ```
-daiary/                           # リポジトリルート
+daiary/                           # Melos モノレポルート
 ├── README.md
 ├── Makefile                      # 統一タスクランナー
+├── melos.yaml                    # Melos モノレポ設定
+├── pubspec.yaml                  # ルート pubspec（Melos ワークスペース）
 ├── .github/
 │   └── workflows/
-│       ├── mobile-ci.yml         # Flutter CI（mobile/変更時のみ）
-│       ├── mobile-offline-ci.yml # Flutter CI（mobile-offline/変更時のみ）
-│       ├── backend-ci.yml        # FastAPI CI（backend/変更時のみ）
+│       ├── online-ci.yml         # Flutter CI（apps/online/ 変更時のみ）
+│       ├── offline-ci.yml        # Flutter CI（apps/offline/ 変更時のみ）
+│       ├── backend-ci.yml        # FastAPI CI（backend/ 変更時のみ）
 │       └── db-migration.yml      # マイグレーション検証
-├── mobile/                       # Flutter アプリ（オンライン版）
-│   ├── pubspec.yaml
-│   ├── analysis_options.yaml
-│   ├── .env.example
-│   ├── lib/
-│   ├── test/
-│   ├── integration_test/
-│   └── android/ & ios/
-├── mobile-offline/               # Flutter アプリ（オフライン版）
-│   ├── pubspec.yaml
-│   ├── lib/
-│   ├── test/
-│   └── android/ & ios/
+├── apps/
+│   ├── online/                   # Flutter アプリ（オンライン版）
+│   │   ├── pubspec.yaml
+│   │   ├── analysis_options.yaml
+│   │   ├── .env.example
+│   │   ├── lib/
+│   │   ├── test/
+│   │   ├── integration_test/
+│   │   └── android/ & ios/
+│   └── offline/                  # Flutter アプリ（オフライン版）
+│       ├── pubspec.yaml
+│       ├── lib/
+│       ├── test/
+│       └── android/ & ios/
+├── packages/
+│   └── shared/                   # 共有コード（core/, config/theme.dart, services/share_service.dart 等）
+│       ├── pubspec.yaml
+│       └── lib/
 ├── backend/                      # FastAPI サーバー（オンライン版のみ）
 │   ├── pyproject.toml
 │   ├── requirements.txt
@@ -117,12 +125,12 @@ daiary/                           # リポジトリルート
 └── docker-compose.yml            # ローカル開発用（backend + Supabase）
 ```
 
-### 2.2 Flutter オンライン版（mobile/）
+### 2.2 Flutter オンライン版（apps/online/）
 
 #### アーキテクチャ: Riverpod + Go Router + Repository Pattern
 
 ```
-mobile/lib/
+apps/online/lib/
 ├── main.dart
 ├── app.dart
 ├── config/
@@ -191,14 +199,14 @@ mobile/lib/
 | cached_network_image | 画像キャッシュ |
 | share_plus | OS標準共有シート |
 
-### 2.2A Flutter オフライン版（mobile-offline/）
+### 2.2A Flutter オフライン版（apps/offline/）
 
 #### アーキテクチャ: Riverpod + Go Router + Repository Pattern + Platform Channel
 
 オンライン版のClean Architectureを継承し、data層のdatasourceをremote→localに差し替えた構成。バックエンドサーバー不要。
 
 ```
-mobile-offline/lib/
+apps/offline/lib/
 ├── main.dart
 ├── app.dart
 ├── config/
@@ -263,11 +271,11 @@ mobile-offline/lib/
 #### ネイティブ側（Platform Channel）
 
 ```
-mobile-offline/android/app/src/main/kotlin/.../
+apps/offline/android/app/src/main/kotlin/.../
 ├── MainActivity.kt           # GemmaPlugin登録
 └── GemmaPlugin.kt            # MediaPipe LLM Inference API統合
 
-mobile-offline/ios/Runner/
+apps/offline/ios/Runner/
 ├── AppDelegate.swift          # GemmaPlugin登録
 └── GemmaPlugin.swift          # MediaPipe LLM Inference API統合
 ```
@@ -466,7 +474,7 @@ backend/
 | タスク | 詳細 | 成果物 |
 |---|---|---|
 | モノレポ初期セットアップ | リポジトリ作成、ディレクトリ構成、Makefile、.gitignore | リポジトリルート構成 |
-| 開発環境セットアップ | Flutter / FastAPI / Supabaseの初期設定 | mobile/ backend/ supabase/ |
+| 開発環境セットアップ | Flutter / FastAPI / Supabaseの初期設定 | apps/online/ backend/ supabase/ |
 | CI/CDパイプライン構築 | GitHub Actions設定（パスフィルタによる差分ビルド） | .github/workflows/ |
 | ローカル開発環境整備 | docker-compose.yml（backend + Supabase Local） | docker-compose.yml |
 | UI/UXデザイン | Figmaでワイヤーフレーム・モックアップ作成 | Figmaデザインファイル |
@@ -559,7 +567,7 @@ backend/
 
 | フェーズ | 期間 | 内容 |
 |---|---|---|
-| Phase OL-1: 基盤構築 | 1週間 | mobile/からのコピー、SQLite化、認証/課金/広告除去、pubspec更新 |
+| Phase OL-1: 基盤構築 | 1週間 | リファクタリング完了済み（Melos モノレポ構成に移行、apps/offline/ として構成） |
 | Phase OL-2: ローカルデータ層 | 1週間 | PhotoLocalDataSource、AlbumLocalDataSource、エンティティ改修、provider書き換え |
 | Phase OL-3: カメラ・写真フロー | 1週間 | DB連携、サムネイル生成、EXIF抽出、画像サイズ取得、ゴミ箱クリーンアップ |
 | Phase OL-4: UI/UX・設定 | 1週間 | ルーティング、設定画面、テーマ反映、ストレージ表示、全データ削除 |
