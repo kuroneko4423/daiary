@@ -312,8 +312,13 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
                     ),
                   ),
                   FilledButton.icon(
-                    onPressed: () {
-                      context.push('/ai-generate', extra: imagePath);
+                    onPressed: () async {
+                      await _controller?.dispose();
+                      _controller = null;
+                      if (!mounted) return;
+                      await context.push('/ai-generate', extra: imagePath);
+                      if (!mounted) return;
+                      await _initializeCamera();
                     },
                     icon: const Icon(Icons.auto_awesome),
                     label: const Text('AI Generate'),

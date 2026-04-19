@@ -102,9 +102,19 @@ class AiLocalDataSource {
     required int latencyMs,
   }) async {
     final db = await DatabaseService.database;
+    final rows = await db.query(
+      'photos',
+      columns: ['id'],
+      where: 'local_path = ?',
+      whereArgs: [photoPath],
+      limit: 1,
+    );
+    if (rows.isEmpty) return;
+    final photoId = rows.first['id'] as String;
+
     await db.insert('ai_generations', {
       'id': _uuid.v4(),
-      'photo_id': photoPath, // Using path as reference for offline
+      'photo_id': photoId,
       'generation_type': generationType,
       'model': 'gemma-4-e2b',
       'result': result,
