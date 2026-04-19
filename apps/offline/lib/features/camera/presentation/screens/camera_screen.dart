@@ -58,7 +58,7 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
       final cameras = await availableCameras();
       if (cameras.isEmpty) {
         setState(() {
-          _initError = 'No cameras available on this device';
+          _initError = 'このデバイスでは利用可能なカメラがありません';
           _isInitializing = false;
         });
         return;
@@ -89,7 +89,7 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
     } catch (e) {
       if (mounted) {
         setState(() {
-          _initError = 'Failed to initialize camera: $e';
+          _initError = 'カメラの初期化に失敗しました: $e';
           _isInitializing = false;
         });
       }
@@ -113,7 +113,7 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to capture photo: $e')),
+          SnackBar(content: Text('写真の撮影に失敗しました: $e')),
         );
       }
     }
@@ -136,7 +136,7 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to import photo: $e')),
+          SnackBar(content: Text('写真のインポートに失敗しました: $e')),
         );
       }
     }
@@ -202,13 +202,13 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
             FilledButton.icon(
               onPressed: _initializeCamera,
               icon: const Icon(Icons.refresh),
-              label: const Text('Retry'),
+              label: const Text('再試行'),
             ),
             const SizedBox(height: 12),
             OutlinedButton.icon(
               onPressed: _importFromGallery,
               icon: const Icon(Icons.photo_library),
-              label: const Text('Import from Gallery'),
+              label: const Text('ギャラリーからインポート'),
               style: OutlinedButton.styleFrom(
                 foregroundColor: Colors.white,
                 side: const BorderSide(color: Colors.white54),
@@ -263,7 +263,7 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
       appBar: AppBar(
         backgroundColor: Colors.black,
         foregroundColor: Colors.white,
-        title: const Text('Preview'),
+        title: const Text('プレビュー'),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
@@ -291,7 +291,7 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
                           .resetToPreview();
                     },
                     icon: const Icon(Icons.refresh),
-                    label: const Text('Retake'),
+                    label: const Text('撮り直し'),
                     style: OutlinedButton.styleFrom(
                       foregroundColor: Colors.white,
                       side: const BorderSide(color: Colors.white54),
@@ -305,7 +305,7 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
                       );
                     },
                     icon: const Icon(Icons.share),
-                    label: const Text('Share'),
+                    label: const Text('シェア'),
                     style: OutlinedButton.styleFrom(
                       foregroundColor: Colors.white,
                       side: const BorderSide(color: Colors.white54),
@@ -321,7 +321,7 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
                       await _initializeCamera();
                     },
                     icon: const Icon(Icons.auto_awesome),
-                    label: const Text('AI Generate'),
+                    label: const Text('AI生成'),
                   ),
                 ],
               ),

@@ -29,22 +29,22 @@ class _MainShellState extends State<MainShell> {
           NavigationDestination(
             icon: Icon(Icons.camera_alt_outlined),
             selectedIcon: Icon(Icons.camera_alt),
-            label: 'Camera',
+            label: 'カメラ',
           ),
           NavigationDestination(
             icon: Icon(Icons.photo_library_outlined),
             selectedIcon: Icon(Icons.photo_library),
-            label: 'Photos',
+            label: '写真',
           ),
           NavigationDestination(
             icon: Icon(Icons.photo_album_outlined),
             selectedIcon: Icon(Icons.photo_album),
-            label: 'Albums',
+            label: 'アルバム',
           ),
           NavigationDestination(
             icon: Icon(Icons.settings_outlined),
             selectedIcon: Icon(Icons.settings),
-            label: 'Settings',
+            label: '設定',
           ),
         ],
       ),

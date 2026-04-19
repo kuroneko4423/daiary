@@ -26,7 +26,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('AI Model Setup'),
+        title: const Text('AIモデルセットアップ'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(24.0),
@@ -48,7 +48,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
             ),
             const SizedBox(height: 8),
             Text(
-              'On-device AI for hashtag & caption generation',
+              'ハッシュタグ・キャプション生成用のオンデバイスAI',
               style: theme.textTheme.bodyLarge?.copyWith(
                 color: theme.colorScheme.onSurfaceVariant,
               ),
@@ -66,8 +66,8 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                     const SizedBox(width: 8),
                     Expanded(
                       child: Text(
-                        'This app uses network for AI model download and ad delivery. '
-                        'All other features work offline.',
+                        'このアプリはAIモデルのダウンロードと広告配信にネットワークを使用します。'
+                        'その他の機能はオフラインで動作します。',
                         style: theme.textTheme.bodySmall?.copyWith(
                           color: theme.colorScheme.onSurfaceVariant,
                         ),
@@ -99,8 +99,8 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                         Expanded(
                           child: Text(
                             state.isModelReady
-                                ? 'Model is ready'
-                                : 'Model not downloaded',
+                                ? 'モデルの準備が完了しました'
+                                : 'モデルがダウンロードされていません',
                             style: theme.textTheme.titleMedium,
                           ),
                         ),
@@ -136,7 +136,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                 child: FilledButton.icon(
                   onPressed: () => _startDownload(),
                   icon: const Icon(Icons.download),
-                  label: const Text('Download Model (~1 GB)'),
+                  label: const Text('モデルをダウンロード(約1GB)'),
                 ),
               ),
 
@@ -149,7 +149,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                         .read(onboardingNotifierProvider.notifier)
                         .cancelDownload();
                   },
-                  child: const Text('Cancel'),
+                  child: const Text('キャンセル'),
                 ),
               ),
 
@@ -158,7 +158,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                 width: double.infinity,
                 child: FilledButton(
                   onPressed: () => _completeOnboarding(),
-                  child: const Text('Done'),
+                  child: const Text('完了'),
                 ),
               ),
               const SizedBox(height: 8),
@@ -171,7 +171,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                         .deleteModel();
                   },
                   icon: Icon(Icons.delete, color: theme.colorScheme.error),
-                  label: Text('Delete Model',
+                  label: Text('モデルを削除',
                       style: TextStyle(color: theme.colorScheme.error)),
                 ),
               ),
@@ -192,20 +192,20 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
       final proceed = await showDialog<bool>(
         context: context,
         builder: (context) => AlertDialog(
-          title: const Text('No Wi-Fi Connection'),
+          title: const Text('Wi-Fiに接続されていません'),
           content: const Text(
-            'You are not connected to Wi-Fi. '
-            'The model download is approximately 1 GB. '
-            'Do you want to continue using mobile data?',
+            'Wi-Fiに接続されていません。'
+            'モデルのダウンロードは約1GBです。'
+            'モバイルデータを使用して続行しますか?',
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(false),
-              child: const Text('Cancel'),
+              child: const Text('キャンセル'),
             ),
             FilledButton(
               onPressed: () => Navigator.of(context).pop(true),
-              child: const Text('Continue'),
+              child: const Text('続行'),
             ),
           ],
         ),

@@ -33,7 +33,7 @@ class _PhotoListScreenState extends ConsumerState<PhotoListScreen> {
     return Scaffold(
       bottomNavigationBar: const BannerAdWidget(),
       appBar: AppBar(
-        title: const Text('Photos'),
+        title: const Text('写真'),
         actions: [
           if (photoState.isMultiSelectMode) ...[
             IconButton(
@@ -46,25 +46,25 @@ class _PhotoListScreenState extends ConsumerState<PhotoListScreen> {
                 }
                 ref.read(photoListNotifierProvider.notifier).clearSelection();
               },
-              tooltip: 'Favorite',
+              tooltip: 'お気に入り',
             ),
             IconButton(
               icon: const Icon(Icons.delete),
               onPressed: () => _confirmDeleteSelected(photoState.selectedIds),
-              tooltip: 'Delete',
+              tooltip: '削除',
             ),
             IconButton(
               icon: const Icon(Icons.close),
               onPressed: () =>
                   ref.read(photoListNotifierProvider.notifier).clearSelection(),
-              tooltip: 'Cancel',
+              tooltip: 'キャンセル',
             ),
           ] else ...[
             IconButton(
               icon: Icon(isGrid ? Icons.view_list : Icons.grid_view),
               onPressed: () =>
                   ref.read(photoViewModeProvider.notifier).state = !isGrid,
-              tooltip: isGrid ? 'List view' : 'Grid view',
+              tooltip: isGrid ? 'リスト表示' : 'グリッド表示',
             ),
             PopupMenuButton<PhotoFilter>(
               icon: const Icon(Icons.filter_list),
@@ -84,7 +84,7 @@ class _PhotoListScreenState extends ConsumerState<PhotoListScreen> {
                               ? Theme.of(context).colorScheme.primary
                               : null),
                       const SizedBox(width: 8),
-                      const Text('All Photos'),
+                      const Text('すべての写真'),
                     ],
                   ),
                 ),
@@ -97,7 +97,7 @@ class _PhotoListScreenState extends ConsumerState<PhotoListScreen> {
                               ? Theme.of(context).colorScheme.primary
                               : null),
                       const SizedBox(width: 8),
-                      const Text('Favorites'),
+                      const Text('お気に入り'),
                     ],
                   ),
                 ),
@@ -110,7 +110,7 @@ class _PhotoListScreenState extends ConsumerState<PhotoListScreen> {
                               ? Theme.of(context).colorScheme.primary
                               : null),
                       const SizedBox(width: 8),
-                      const Text('Trash'),
+                      const Text('ゴミ箱'),
                     ],
                   ),
                 ),
@@ -125,7 +125,7 @@ class _PhotoListScreenState extends ConsumerState<PhotoListScreen> {
 
   Widget _buildBody(PhotoListState photoState, bool isGrid) {
     if (photoState.isLoading && photoState.photos.isEmpty) {
-      return const LoadingWidget(message: 'Loading photos...');
+      return const LoadingWidget(message: '写真を読み込み中...');
     }
 
     if (photoState.error != null && photoState.photos.isEmpty) {
@@ -193,7 +193,7 @@ class _PhotoListScreenState extends ConsumerState<PhotoListScreen> {
               ),
             ),
           ),
-          title: Text(photo.originalFilename ?? 'Photo'),
+          title: Text(photo.originalFilename ?? '写真'),
           subtitle: Text(_formatDate(photo.createdAt)),
           trailing: photo.isFavorite
               ? Icon(Icons.favorite,
@@ -285,14 +285,14 @@ class _PhotoListScreenState extends ConsumerState<PhotoListScreen> {
           ),
           const SizedBox(height: 16),
           Text(
-            'No photos yet',
+            '写真がまだありません',
             style: Theme.of(context).textTheme.titleMedium?.copyWith(
                   color: Theme.of(context).colorScheme.outline,
                 ),
           ),
           const SizedBox(height: 8),
           Text(
-            'Take a photo or import from gallery',
+            '写真を撮るかギャラリーからインポートしてください',
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                   color: Theme.of(context).colorScheme.outline,
                 ),
@@ -306,13 +306,12 @@ class _PhotoListScreenState extends ConsumerState<PhotoListScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Delete Photos'),
-        content: Text(
-            'Are you sure you want to delete ${selectedIds.length} photo(s)?'),
+        title: const Text('写真を削除'),
+        content: Text('${selectedIds.length}件の写真を削除してもよろしいですか?'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
+            child: const Text('キャンセル'),
           ),
           FilledButton(
             onPressed: () {
@@ -324,7 +323,7 @@ class _PhotoListScreenState extends ConsumerState<PhotoListScreen> {
             style: FilledButton.styleFrom(
               backgroundColor: Theme.of(context).colorScheme.error,
             ),
-            child: const Text('Delete'),
+            child: const Text('削除'),
           ),
         ],
       ),

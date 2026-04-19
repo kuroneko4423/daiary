@@ -29,7 +29,7 @@ class PhotoDetailScreen extends ConsumerWidget {
       appBar: AppBar(
         backgroundColor: Colors.black,
         foregroundColor: Colors.white,
-        title: const Text('Photo'),
+        title: const Text('写真'),
         actions: [
           IconButton(
             icon: const Icon(Icons.share),
@@ -48,7 +48,7 @@ class PhotoDetailScreen extends ConsumerWidget {
         ),
         error: (error, _) => Center(
           child: Text(
-            'Failed to load photo: $error',
+            '写真の読み込みに失敗しました: $error',
             style: const TextStyle(color: Colors.white70),
           ),
         ),
@@ -82,7 +82,7 @@ class PhotoDetailScreen extends ConsumerWidget {
           children: [
             _buildActionButton(
               icon: photo.isFavorite ? Icons.favorite : Icons.favorite_border,
-              label: 'Favorite',
+              label: 'お気に入り',
               color: photo.isFavorite ? Colors.red : Colors.white,
               onTap: () {
                 ref
@@ -92,20 +92,20 @@ class PhotoDetailScreen extends ConsumerWidget {
             ),
             _buildActionButton(
               icon: Icons.auto_awesome,
-              label: 'AI Generate',
+              label: 'AI生成',
               color: Colors.amber,
               onTap: () =>
                   context.push('/ai-generate', extra: photo.imagePath),
             ),
             _buildActionButton(
               icon: Icons.info_outline,
-              label: 'Details',
+              label: '詳細',
               color: Colors.white,
               onTap: () => _showExifBottomSheet(context, photo),
             ),
             _buildActionButton(
               icon: Icons.delete_outline,
-              label: 'Delete',
+              label: '削除',
               color: Colors.white,
               onTap: () => _confirmDelete(context, ref, photo.id),
             ),
@@ -143,16 +143,16 @@ class PhotoDetailScreen extends ConsumerWidget {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Photo Details',
+            Text('写真の詳細',
                 style: Theme.of(context).textTheme.titleLarge),
             const SizedBox(height: 16),
-            _buildInfoRow('Filename', photo.originalFilename ?? 'Unknown'),
+            _buildInfoRow('ファイル名', photo.originalFilename ?? '不明'),
             if (photo.width != null && photo.height != null)
-              _buildInfoRow('Dimensions', '${photo.width} x ${photo.height}'),
+              _buildInfoRow('寸法', '${photo.width} x ${photo.height}'),
             if (photo.fileSize != null)
-              _buildInfoRow('File size', _formatFileSize(photo.fileSize!)),
+              _buildInfoRow('ファイルサイズ', _formatFileSize(photo.fileSize!)),
             _buildInfoRow(
-              'Created',
+              '作成日時',
               '${photo.createdAt.year}/${photo.createdAt.month.toString().padLeft(2, '0')}/${photo.createdAt.day.toString().padLeft(2, '0')}',
             ),
             const SizedBox(height: 16),
@@ -185,12 +185,12 @@ class PhotoDetailScreen extends ConsumerWidget {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Delete Photo'),
-        content: const Text('Are you sure you want to delete this photo?'),
+        title: const Text('写真を削除'),
+        content: const Text('この写真を削除してもよろしいですか?'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
+            child: const Text('キャンセル'),
           ),
           FilledButton(
             onPressed: () async {
@@ -205,7 +205,7 @@ class PhotoDetailScreen extends ConsumerWidget {
             style: FilledButton.styleFrom(
               backgroundColor: Theme.of(context).colorScheme.error,
             ),
-            child: const Text('Delete'),
+            child: const Text('削除'),
           ),
         ],
       ),

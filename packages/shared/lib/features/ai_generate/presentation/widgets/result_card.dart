@@ -31,15 +31,15 @@ class ResultCard extends StatelessWidget {
             Row(
               children: [
                 if (onCopy != null)
-                  IconButton(onPressed: onCopy, icon: const Icon(Icons.copy), tooltip: 'Copy'),
+                  IconButton(onPressed: onCopy, icon: const Icon(Icons.copy), tooltip: 'コピー'),
                 if (onShare != null)
-                  IconButton(onPressed: onShare, icon: const Icon(Icons.share), tooltip: 'Share'),
+                  IconButton(onPressed: onShare, icon: const Icon(Icons.share), tooltip: 'シェア'),
                 const Spacer(),
                 if (onRegenerate != null)
                   TextButton.icon(
                     onPressed: onRegenerate,
                     icon: const Icon(Icons.refresh),
-                    label: const Text('Regenerate'),
+                    label: const Text('再生成'),
                   ),
               ],
             ),

@@ -55,7 +55,7 @@ class _AlbumListScreenState extends ConsumerState<AlbumListScreen> {
     final albumState = ref.watch(albumListNotifierProvider);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Albums')),
+      appBar: AppBar(title: const Text('アルバム')),
       body: _buildBody(albumState),
       floatingActionButton: FloatingActionButton(
         onPressed: () => _showCreateAlbumDialog(),
@@ -66,7 +66,7 @@ class _AlbumListScreenState extends ConsumerState<AlbumListScreen> {
 
   Widget _buildBody(AlbumListState albumState) {
     if (albumState.isLoading && albumState.albums.isEmpty) {
-      return const LoadingWidget(message: 'Loading albums...');
+      return const LoadingWidget(message: 'アルバムを読み込み中...');
     }
 
     if (albumState.error != null && albumState.albums.isEmpty) {
@@ -128,14 +128,14 @@ class _AlbumListScreenState extends ConsumerState<AlbumListScreen> {
           ),
           const SizedBox(height: 16),
           Text(
-            'No albums yet',
+            'アルバムがまだありません',
             style: Theme.of(context).textTheme.titleMedium?.copyWith(
                   color: Theme.of(context).colorScheme.outline,
                 ),
           ),
           const SizedBox(height: 8),
           Text(
-            'Create your first album to organize photos',
+            '最初のアルバムを作成して写真を整理しましょう',
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                   color: Theme.of(context).colorScheme.outline,
                 ),
@@ -144,7 +144,7 @@ class _AlbumListScreenState extends ConsumerState<AlbumListScreen> {
           FilledButton.icon(
             onPressed: () => _showCreateAlbumDialog(),
             icon: const Icon(Icons.add),
-            label: const Text('Create Album'),
+            label: const Text('アルバムを作成'),
           ),
         ],
       ),
@@ -156,19 +156,19 @@ class _AlbumListScreenState extends ConsumerState<AlbumListScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Create Album'),
+        title: const Text('アルバムを作成'),
         content: TextField(
           controller: controller,
           decoration: const InputDecoration(
-            labelText: 'Album Name',
-            hintText: 'Enter album name',
+            labelText: 'アルバム名',
+            hintText: 'アルバム名を入力',
           ),
           autofocus: true,
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
+            child: const Text('キャンセル'),
           ),
           FilledButton(
             onPressed: () {
@@ -180,7 +180,7 @@ class _AlbumListScreenState extends ConsumerState<AlbumListScreen> {
                 Navigator.pop(context);
               }
             },
-            child: const Text('Create'),
+            child: const Text('作成'),
           ),
         ],
       ),
@@ -191,12 +191,12 @@ class _AlbumListScreenState extends ConsumerState<AlbumListScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Delete Album'),
-        content: Text('Are you sure you want to delete "$albumName"?'),
+        title: const Text('アルバムを削除'),
+        content: Text('"$albumName"を削除してもよろしいですか?'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
+            child: const Text('キャンセル'),
           ),
           FilledButton(
             onPressed: () {
@@ -208,7 +208,7 @@ class _AlbumListScreenState extends ConsumerState<AlbumListScreen> {
             style: FilledButton.styleFrom(
               backgroundColor: Theme.of(context).colorScheme.error,
             ),
-            child: const Text('Delete'),
+            child: const Text('削除'),
           ),
         ],
       ),

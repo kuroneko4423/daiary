@@ -15,23 +15,23 @@ class SettingsScreen extends ConsumerWidget {
     final theme = Theme.of(context);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Settings')),
+      appBar: AppBar(title: const Text('設定')),
       body: ListView(
         children: [
           // Default AI Settings section
-          _buildSectionHeader(context, 'Default AI Settings'),
+          _buildSectionHeader(context, 'デフォルトAI設定'),
           ListTile(
             leading: const Icon(Icons.language),
-            title: const Text('Default Language'),
+            title: const Text('デフォルト言語'),
             subtitle:
-                Text(settings.defaultLanguage == 'ja' ? '\u65E5\u672C\u8A9E' : 'English'),
+                Text(settings.defaultLanguage == 'ja' ? '日本語' : '英語'),
             trailing: const Icon(Icons.chevron_right),
             onTap: () =>
                 _showLanguageDialog(context, ref, settings.defaultLanguage),
           ),
           ListTile(
             leading: const Icon(Icons.style),
-            title: const Text('Default Style'),
+            title: const Text('デフォルトスタイル'),
             subtitle: Text(_styleLabel(settings.defaultStyle)),
             trailing: const Icon(Icons.chevron_right),
             onTap: () =>
@@ -40,10 +40,10 @@ class SettingsScreen extends ConsumerWidget {
           const Divider(),
 
           // AI Model section
-          _buildSectionHeader(context, 'AI Model'),
+          _buildSectionHeader(context, 'AIモデル'),
           ListTile(
             leading: const Icon(Icons.smart_toy),
-            title: const Text('AI Model Management'),
+            title: const Text('AIモデル管理'),
             subtitle: const Text('Gemma 4 E2B'),
             trailing: const Icon(Icons.chevron_right),
             onTap: () => context.push('/onboarding'),
@@ -51,10 +51,10 @@ class SettingsScreen extends ConsumerWidget {
           const Divider(),
 
           // Theme section
-          _buildSectionHeader(context, 'Appearance'),
+          _buildSectionHeader(context, '外観'),
           ListTile(
             leading: const Icon(Icons.palette),
-            title: const Text('Theme'),
+            title: const Text('テーマ'),
             subtitle: Text(_themeModeLabel(settings.themeMode)),
             trailing: const Icon(Icons.chevron_right),
             onTap: () =>
@@ -63,22 +63,22 @@ class SettingsScreen extends ConsumerWidget {
           const Divider(),
 
           // Storage section
-          _buildSectionHeader(context, 'Storage'),
+          _buildSectionHeader(context, 'ストレージ'),
           _buildStorageTile(ref),
           const Divider(),
 
           // Data management
-          _buildSectionHeader(context, 'Data'),
+          _buildSectionHeader(context, 'データ'),
           ListTile(
             leading: Icon(Icons.delete_sweep, color: theme.colorScheme.error),
-            title: Text('Clear All Data',
+            title: Text('すべてのデータを削除',
                 style: TextStyle(color: theme.colorScheme.error)),
             onTap: () => _confirmClearData(context, ref),
           ),
           const Divider(),
 
           // Network usage section
-          _buildSectionHeader(context, 'Network Usage'),
+          _buildSectionHeader(context, 'ネットワーク使用'),
           Card(
             margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
             child: Padding(
@@ -93,22 +93,22 @@ class SettingsScreen extends ConsumerWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'This app uses network for:',
+                          'このアプリがネットワークを使用する場面:',
                           style: theme.textTheme.bodyMedium?.copyWith(
                             fontWeight: FontWeight.bold,
                           ),
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          '\u2022 AI model download (initial setup, ~1 GB)\n'
-                          '\u2022 Ad delivery (Google AdMob)',
+                          '・AIモデルのダウンロード(初回セットアップ、約1GB)\n'
+                          '・広告配信(Google AdMob)',
                           style: theme.textTheme.bodySmall?.copyWith(
                             color: theme.colorScheme.onSurfaceVariant,
                           ),
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          'All other features (camera, albums, AI generation) work completely offline.',
+                          'その他すべての機能(カメラ、アルバム、AI生成)は完全にオフラインで動作します。',
                           style: theme.textTheme.bodySmall?.copyWith(
                             color: theme.colorScheme.onSurfaceVariant,
                           ),
@@ -123,15 +123,15 @@ class SettingsScreen extends ConsumerWidget {
           const Divider(),
 
           // About section
-          _buildSectionHeader(context, 'About'),
+          _buildSectionHeader(context, 'このアプリについて'),
           ListTile(
             leading: const Icon(Icons.info),
-            title: const Text('Version'),
-            subtitle: const Text('1.0.0 (Offline)'),
+            title: const Text('バージョン'),
+            subtitle: const Text('1.0.0 (オフライン)'),
           ),
           ListTile(
             leading: const Icon(Icons.privacy_tip),
-            title: const Text('Privacy Policy'),
+            title: const Text('プライバシーポリシー'),
             trailing: const Icon(Icons.chevron_right),
             onTap: () {
               // Open privacy policy
@@ -157,15 +157,15 @@ class SettingsScreen extends ConsumerWidget {
     final storageAsync = ref.watch(storageUsageProvider);
     return ListTile(
       leading: const Icon(Icons.storage),
-      title: const Text('Storage Usage'),
+      title: const Text('ストレージ使用量'),
       subtitle: storageAsync.when(
         data: (usage) => Text(
           '${_formatBytes(usage.totalBytes)} '
-          '(Photos: ${_formatBytes(usage.photosBytes)}, '
-          'Thumbnails: ${_formatBytes(usage.thumbnailsBytes)})',
+          '(写真: ${_formatBytes(usage.photosBytes)}, '
+          'サムネイル: ${_formatBytes(usage.thumbnailsBytes)})',
         ),
-        loading: () => const Text('Calculating...'),
-        error: (_, __) => const Text('Unable to calculate'),
+        loading: () => const Text('計算中...'),
+        error: (_, __) => const Text('計算できません'),
       ),
     );
   }
@@ -203,11 +203,11 @@ class SettingsScreen extends ConsumerWidget {
   String _themeModeLabel(String mode) {
     switch (mode) {
       case 'light':
-        return 'Light';
+        return 'ライト';
       case 'dark':
-        return 'Dark';
+        return 'ダーク';
       default:
-        return 'System';
+        return 'システム';
     }
   }
 
@@ -216,10 +216,10 @@ class SettingsScreen extends ConsumerWidget {
     showDialog(
       context: context,
       builder: (context) => SimpleDialog(
-        title: const Text('Default Language'),
+        title: const Text('デフォルト言語'),
         children: [
           RadioListTile<String>(
-            title: const Text('\u65E5\u672C\u8A9E'),
+            title: const Text('日本語'),
             value: 'ja',
             groupValue: current,
             onChanged: (value) {
@@ -230,7 +230,7 @@ class SettingsScreen extends ConsumerWidget {
             },
           ),
           RadioListTile<String>(
-            title: const Text('English'),
+            title: const Text('英語'),
             value: 'en',
             groupValue: current,
             onChanged: (value) {
@@ -257,7 +257,7 @@ class SettingsScreen extends ConsumerWidget {
     showDialog(
       context: context,
       builder: (context) => SimpleDialog(
-        title: const Text('Default Style'),
+        title: const Text('デフォルトスタイル'),
         children: styles.entries.map((entry) {
           return RadioListTile<String>(
             title: Text(entry.value),
@@ -279,10 +279,10 @@ class SettingsScreen extends ConsumerWidget {
     showDialog(
       context: context,
       builder: (context) => SimpleDialog(
-        title: const Text('Theme'),
+        title: const Text('テーマ'),
         children: [
           RadioListTile<String>(
-            title: const Text('Light'),
+            title: const Text('ライト'),
             value: 'light',
             groupValue: current,
             onChanged: (value) {
@@ -293,7 +293,7 @@ class SettingsScreen extends ConsumerWidget {
             },
           ),
           RadioListTile<String>(
-            title: const Text('Dark'),
+            title: const Text('ダーク'),
             value: 'dark',
             groupValue: current,
             onChanged: (value) {
@@ -304,7 +304,7 @@ class SettingsScreen extends ConsumerWidget {
             },
           ),
           RadioListTile<String>(
-            title: const Text('System'),
+            title: const Text('システム'),
             value: 'system',
             groupValue: current,
             onChanged: (value) {
@@ -323,14 +323,14 @@ class SettingsScreen extends ConsumerWidget {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Clear All Data'),
+        title: const Text('すべてのデータを削除'),
         content: const Text(
-          'This will permanently delete all photos, albums, and AI generation history. This cannot be undone.',
+          'すべての写真、アルバム、AI生成履歴が完全に削除されます。この操作は元に戻せません。',
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
+            child: const Text('キャンセル'),
           ),
           FilledButton(
             onPressed: () async {
@@ -342,13 +342,13 @@ class SettingsScreen extends ConsumerWidget {
                 ref.invalidate(storageUsageProvider);
                 if (context.mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('All data cleared')),
+                    const SnackBar(content: Text('すべてのデータを削除しました')),
                   );
                 }
               } catch (e) {
                 if (context.mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Failed to clear data: $e')),
+                    SnackBar(content: Text('データの削除に失敗しました: $e')),
                   );
                 }
               }
@@ -356,7 +356,7 @@ class SettingsScreen extends ConsumerWidget {
             style: FilledButton.styleFrom(
               backgroundColor: Theme.of(context).colorScheme.error,
             ),
-            child: const Text('Clear'),
+            child: const Text('削除'),
           ),
         ],
       ),

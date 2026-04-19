@@ -35,7 +35,7 @@ class CameraControls extends StatelessWidget {
               IconButton(
                 onPressed: onToggleFlash,
                 icon: Icon(_flashIcon, color: Colors.white),
-                tooltip: 'Flash: ${flashMode.name}',
+                tooltip: 'フラッシュ: ${_flashLabel(flashMode)}',
               ),
               IconButton(
                 onPressed: onToggleGrid,
@@ -43,7 +43,7 @@ class CameraControls extends StatelessWidget {
                   Icons.grid_on,
                   color: showGridLines ? Colors.yellow : Colors.white,
                 ),
-                tooltip: 'Grid lines',
+                tooltip: 'グリッド線',
               ),
             ],
           ),
@@ -61,7 +61,7 @@ class CameraControls extends StatelessWidget {
                 onPressed: onOpenGallery,
                 icon: const Icon(Icons.photo_library, size: 32),
                 color: Colors.white,
-                tooltip: 'Import from gallery',
+                tooltip: 'ギャラリーからインポート',
               ),
               // Capture button
               GestureDetector(
@@ -87,7 +87,7 @@ class CameraControls extends StatelessWidget {
                 onPressed: onFlipCamera,
                 icon: const Icon(Icons.flip_camera_android, size: 32),
                 color: Colors.white,
-                tooltip: 'Flip camera',
+                tooltip: 'カメラを切り替え',
               ),
             ],
           ),
@@ -106,6 +106,19 @@ class CameraControls extends StatelessWidget {
         return Icons.flash_on;
       case FlashMode.torch:
         return Icons.highlight;
+    }
+  }
+
+  String _flashLabel(FlashMode mode) {
+    switch (mode) {
+      case FlashMode.off:
+        return 'オフ';
+      case FlashMode.auto:
+        return '自動';
+      case FlashMode.always:
+        return 'オン';
+      case FlashMode.torch:
+        return 'トーチ';
     }
   }
 }

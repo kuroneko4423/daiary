@@ -36,7 +36,7 @@ class _AlbumDetailScreenState extends ConsumerState<AlbumDetailScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(detailState.album?.name ?? 'Album'),
+        title: Text(detailState.album?.name ?? 'アルバム'),
         actions: [
           IconButton(
             icon: const Icon(Icons.edit),
@@ -62,7 +62,7 @@ class _AlbumDetailScreenState extends ConsumerState<AlbumDetailScreen> {
 
   Widget _buildBody(AlbumDetailState detailState) {
     if (detailState.isLoading && detailState.album == null) {
-      return const LoadingWidget(message: 'Loading album...');
+      return const LoadingWidget(message: 'アルバムを読み込み中...');
     }
 
     if (detailState.error != null && detailState.album == null) {
@@ -116,14 +116,14 @@ class _AlbumDetailScreenState extends ConsumerState<AlbumDetailScreen> {
           ),
           const SizedBox(height: 16),
           Text(
-            'No photos in this album',
+            'このアルバムに写真がありません',
             style: Theme.of(context).textTheme.titleMedium?.copyWith(
                   color: Theme.of(context).colorScheme.outline,
                 ),
           ),
           const SizedBox(height: 8),
           Text(
-            'Add photos from your library',
+            'ライブラリから写真を追加してください',
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                   color: Theme.of(context).colorScheme.outline,
                 ),
@@ -138,18 +138,18 @@ class _AlbumDetailScreenState extends ConsumerState<AlbumDetailScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Edit Album'),
+        title: const Text('アルバムを編集'),
         content: TextField(
           controller: controller,
           decoration: const InputDecoration(
-            labelText: 'Album Name',
+            labelText: 'アルバム名',
           ),
           autofocus: true,
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
+            child: const Text('キャンセル'),
           ),
           FilledButton(
             onPressed: () {
@@ -161,7 +161,7 @@ class _AlbumDetailScreenState extends ConsumerState<AlbumDetailScreen> {
                 Navigator.pop(context);
               }
             },
-            child: const Text('Save'),
+            child: const Text('保存'),
           ),
         ],
       ),
@@ -170,7 +170,7 @@ class _AlbumDetailScreenState extends ConsumerState<AlbumDetailScreen> {
 
   void _shareAlbum() {
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Album sharing coming soon')),
+      const SnackBar(content: Text('アルバムのシェアは近日対応予定です')),
     );
   }
 
@@ -195,13 +195,13 @@ class _AlbumDetailScreenState extends ConsumerState<AlbumDetailScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Remove Photo'),
+        title: const Text('写真を削除'),
         content:
-            const Text('Remove this photo from the album?'),
+            const Text('この写真をアルバムから削除しますか?'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
+            child: const Text('キャンセル'),
           ),
           FilledButton(
             onPressed: () {
@@ -213,7 +213,7 @@ class _AlbumDetailScreenState extends ConsumerState<AlbumDetailScreen> {
             style: FilledButton.styleFrom(
               backgroundColor: Theme.of(context).colorScheme.error,
             ),
-            child: const Text('Remove'),
+            child: const Text('削除'),
           ),
         ],
       ),
@@ -282,13 +282,13 @@ class _AddPhotosSheetState extends ConsumerState<_AddPhotosSheet> {
               children: [
                 Expanded(
                   child: Text(
-                    'Add Photos',
+                    '写真を追加',
                     style: theme.textTheme.titleLarge,
                   ),
                 ),
                 if (_selectedIds.isNotEmpty)
                   Text(
-                    '${_selectedIds.length} selected',
+                    '${_selectedIds.length}件選択中',
                     style: theme.textTheme.bodyMedium?.copyWith(
                       color: theme.colorScheme.primary,
                     ),
@@ -311,8 +311,7 @@ class _AddPhotosSheetState extends ConsumerState<_AddPhotosSheet> {
                   width: double.infinity,
                   child: FilledButton(
                     onPressed: _addSelectedPhotos,
-                    child: Text(
-                        'Add ${_selectedIds.length} photo${_selectedIds.length == 1 ? '' : 's'}'),
+                    child: Text('${_selectedIds.length}件の写真を追加'),
                   ),
                 ),
               ),
@@ -328,14 +327,14 @@ class _AddPhotosSheetState extends ConsumerState<_AddPhotosSheet> {
     }
 
     if (_error != null) {
-      return Center(child: Text('Error: $_error'));
+      return Center(child: Text('エラー: $_error'));
     }
 
     final photos = _allPhotos!;
     if (photos.isEmpty) {
       return Center(
         child: Text(
-          'No photos available to add',
+          '追加できる写真がありません',
           style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                 color: Theme.of(context).colorScheme.outline,
               ),

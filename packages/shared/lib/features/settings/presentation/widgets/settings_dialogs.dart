@@ -8,7 +8,7 @@ void showLanguageDialog(
   showDialog(
     context: context,
     builder: (context) => SimpleDialog(
-      title: const Text('Default Language'),
+      title: const Text('デフォルト言語'),
       children: [
         RadioListTile<String>(
           title: const Text('日本語'),
@@ -20,7 +20,7 @@ void showLanguageDialog(
           },
         ),
         RadioListTile<String>(
-          title: const Text('English'),
+          title: const Text('英語'),
           value: 'en',
           groupValue: current,
           onChanged: (value) {
@@ -49,7 +49,7 @@ void showStyleDialog(
   showDialog(
     context: context,
     builder: (context) => SimpleDialog(
-      title: const Text('Default Style'),
+      title: const Text('デフォルトスタイル'),
       children: styles.entries.map((entry) {
         return RadioListTile<String>(
           title: Text(entry.value),
@@ -73,10 +73,10 @@ void showThemeDialog(
   showDialog(
     context: context,
     builder: (context) => SimpleDialog(
-      title: const Text('Theme'),
+      title: const Text('テーマ'),
       children: [
         RadioListTile<String>(
-          title: const Text('Light'),
+          title: const Text('ライト'),
           value: 'light',
           groupValue: current,
           onChanged: (value) {
@@ -85,7 +85,7 @@ void showThemeDialog(
           },
         ),
         RadioListTile<String>(
-          title: const Text('Dark'),
+          title: const Text('ダーク'),
           value: 'dark',
           groupValue: current,
           onChanged: (value) {
@@ -94,7 +94,7 @@ void showThemeDialog(
           },
         ),
         RadioListTile<String>(
-          title: const Text('System'),
+          title: const Text('システム'),
           value: 'system',
           groupValue: current,
           onChanged: (value) {
@@ -127,11 +127,11 @@ String styleLabel(String style) {
 String themeModeLabel(String mode) {
   switch (mode) {
     case 'light':
-      return 'Light';
+      return 'ライト';
     case 'dark':
-      return 'Dark';
+      return 'ダーク';
     default:
-      return 'System';
+      return 'システム';
   }
 }
 

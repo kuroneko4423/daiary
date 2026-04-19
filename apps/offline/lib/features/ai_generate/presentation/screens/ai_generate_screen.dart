@@ -48,7 +48,7 @@ class _AIGenerateScreenState extends ConsumerState<AIGenerateScreen> {
     return Scaffold(
       bottomNavigationBar: const BannerAdWidget(),
       appBar: AppBar(
-        title: const Text('AI Generate'),
+        title: const Text('AI生成'),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () => context.pop(),
@@ -58,7 +58,7 @@ class _AIGenerateScreenState extends ConsumerState<AIGenerateScreen> {
             padding: const EdgeInsets.only(right: 16),
             child: Center(
               child: Text(
-                aiState.isModelReady ? 'Ready' : 'No Model',
+                aiState.isModelReady ? '準備完了' : 'モデル未ダウンロード',
                 style: theme.textTheme.bodySmall?.copyWith(
                   color: aiState.isModelReady ? Colors.green : Colors.orange,
                   fontWeight: FontWeight.bold,
@@ -100,7 +100,7 @@ class _AIGenerateScreenState extends ConsumerState<AIGenerateScreen> {
                       const SizedBox(width: 12),
                       Expanded(
                         child: Text(
-                          'AI model is not downloaded. Go to Settings > AI Model Management to download.',
+                          'AIモデルがダウンロードされていません。設定 > AIモデル管理からダウンロードしてください。',
                           style: TextStyle(
                               color: theme.colorScheme.onSecondaryContainer),
                         ),
@@ -108,7 +108,7 @@ class _AIGenerateScreenState extends ConsumerState<AIGenerateScreen> {
                       const SizedBox(width: 8),
                       TextButton(
                         onPressed: () => context.go('/settings'),
-                        child: const Text('Settings'),
+                        child: const Text('設定'),
                       ),
                     ],
                   ),
@@ -118,7 +118,7 @@ class _AIGenerateScreenState extends ConsumerState<AIGenerateScreen> {
             ],
 
             // Style selector
-            Text('Style', style: theme.textTheme.titleMedium),
+            Text('スタイル', style: theme.textTheme.titleMedium),
             const SizedBox(height: 8),
             StyleSelector(
               selected: selectedStyle,
@@ -132,8 +132,8 @@ class _AIGenerateScreenState extends ConsumerState<AIGenerateScreen> {
               TextField(
                 controller: _customPromptController,
                 decoration: const InputDecoration(
-                  labelText: 'Custom Prompt',
-                  hintText: 'Describe the style you want...',
+                  labelText: 'カスタムプロンプト',
+                  hintText: '希望のスタイルを説明してください...',
                 ),
                 maxLines: 3,
               ),
@@ -141,12 +141,12 @@ class _AIGenerateScreenState extends ConsumerState<AIGenerateScreen> {
             ],
 
             // Language selector
-            Text('Language', style: theme.textTheme.titleMedium),
+            Text('言語', style: theme.textTheme.titleMedium),
             const SizedBox(height: 8),
             SegmentedButton<String>(
               segments: const [
-                ButtonSegment(value: 'ja', label: Text('\u65E5\u672C\u8A9E')),
-                ButtonSegment(value: 'en', label: Text('English')),
+                ButtonSegment(value: 'ja', label: Text('日本語')),
+                ButtonSegment(value: 'en', label: Text('英語')),
               ],
               selected: {selectedLanguage},
               onSelectionChanged: (values) =>
@@ -156,7 +156,7 @@ class _AIGenerateScreenState extends ConsumerState<AIGenerateScreen> {
             const SizedBox(height: 16),
 
             // Length selector
-            Text('Caption Length', style: theme.textTheme.titleMedium),
+            Text('キャプション長', style: theme.textTheme.titleMedium),
             const SizedBox(height: 8),
             SegmentedButton<GenerationLength>(
               segments: GenerationLength.values
@@ -188,10 +188,10 @@ class _AIGenerateScreenState extends ConsumerState<AIGenerateScreen> {
                     : const Icon(Icons.auto_awesome),
                 label: Text(
                   aiState.isLoadingHashtags
-                      ? 'Generating Hashtags...'
+                      ? 'ハッシュタグを生成中...'
                       : aiState.isLoadingCaption
-                          ? 'Generating Caption...'
-                          : 'Generate',
+                          ? 'キャプションを生成中...'
+                          : '生成',
                 ),
               ),
             ),
@@ -225,11 +225,11 @@ class _AIGenerateScreenState extends ConsumerState<AIGenerateScreen> {
             // Hashtag results
             if (aiState.hashtags != null) ...[
               ResultCard(
-                title: 'Hashtags',
+                title: 'ハッシュタグ',
                 content: aiState.hashtags!.join(' '),
                 onCopy: () {
                   ShareService.copyToClipboard(aiState.hashtags!.join(' '));
-                  _showSnackBar('Hashtags copied to clipboard');
+                  _showSnackBar('ハッシュタグをコピーしました');
                 },
                 onShare: () =>
                     ShareService.shareText(aiState.hashtags!.join(' ')),
@@ -249,11 +249,11 @@ class _AIGenerateScreenState extends ConsumerState<AIGenerateScreen> {
             // Caption result
             if (aiState.caption != null) ...[
               ResultCard(
-                title: 'Caption',
+                title: 'キャプション',
                 content: aiState.caption!,
                 onCopy: () {
                   ShareService.copyToClipboard(aiState.caption!);
-                  _showSnackBar('Caption copied to clipboard');
+                  _showSnackBar('キャプションをコピーしました');
                 },
                 onShare: () => ShareService.shareText(aiState.caption!),
                 onRegenerate: () => _generateCaption(),
@@ -279,7 +279,7 @@ class _AIGenerateScreenState extends ConsumerState<AIGenerateScreen> {
                         }
                       : null,
                   icon: const Icon(Icons.share),
-                  label: const Text('Share with Photo'),
+                  label: const Text('写真と一緒にシェア'),
                 ),
               ),
             ],
