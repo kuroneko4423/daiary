@@ -1,20 +1,52 @@
-# ==== Flutter / Dart ====
-mobile/.dart_tool/
-mobile/.packages
-mobile/.pub-cache/
-mobile/.pub/
-mobile/build/
-mobile/.flutter-plugins
-mobile/.flutter-plugins-dependencies
-mobile/android/.gradle/
-mobile/android/local.properties
-mobile/android/**/GeneratedPluginRegistrant.java
-mobile/ios/Flutter/Generated.xcconfig
-mobile/ios/Flutter/flutter_export_environment.sh
-mobile/ios/Runner/GeneratedPluginRegistrant.*
-mobile/ios/Pods/
-mobile/ios/.symlinks/
+# ==== Dart / Flutter (monorepo) ====
+# Per-package build artifacts
+**/.dart_tool/
+**/.flutter-plugins
+**/.flutter-plugins-dependencies
+**/build/
+**/.pub-cache/
+**/.pub/
+**/.packages
+
+# Android
+**/android/.gradle/
+**/android/app/.cxx/
+**/android/local.properties
+**/android/**/GeneratedPluginRegistrant.java
+**/android/captures/
+**/android/key.properties
+
+# iOS / macOS
+**/ios/Flutter/Generated.xcconfig
+**/ios/Flutter/flutter_export_environment.sh
+**/ios/Runner/GeneratedPluginRegistrant.*
+**/ios/Pods/
+**/ios/.symlinks/
+**/ios/Flutter/flutter_assets/
+**/ios/Flutter/App.framework/
+**/ios/Flutter/Flutter.framework/
+**/macos/Flutter/ephemeral/
+**/macos/Pods/
+
+# Linux / Windows (Flutter desktop generated)
+**/linux/flutter/ephemeral/
+**/windows/flutter/ephemeral/
+
+# Flutter DevTools per-project settings
+**/devtools_options.yaml
+
+# IntelliJ / IDE module files
 *.iml
+
+# Accidental root-level Flutter scaffold (recreated by `flutter create .` at repo root)
+/android/
+/ios/
+/linux/
+/macos/
+/windows/
+/lib/
+/.metadata
+/analysis_options.yaml
 
 # ==== Python ====
 backend/__pycache__/
