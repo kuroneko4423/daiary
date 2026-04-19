@@ -169,45 +169,31 @@ class _AIGenerateScreenState extends ConsumerState<AIGenerateScreen> {
             ),
             const SizedBox(height: 24),
 
-            // Generate buttons
-            Row(
-              children: [
-                Expanded(
-                  child: FilledButton.icon(
-                    onPressed:
-                        aiState.isLoadingHashtags || !aiState.isModelReady
-                            ? null
-                            : () => _generateHashtags(),
-                    icon: aiState.isLoadingHashtags
-                        ? const SizedBox(
-                            width: 16,
-                            height: 16,
-                            child: CircularProgressIndicator(
-                                strokeWidth: 2, color: Colors.white),
-                          )
-                        : const Icon(Icons.tag),
-                    label: const Text('Hashtags'),
-                  ),
+            // Generate button
+            SizedBox(
+              width: double.infinity,
+              child: FilledButton.icon(
+                onPressed: aiState.isLoadingHashtags ||
+                        aiState.isLoadingCaption ||
+                        !aiState.isModelReady
+                    ? null
+                    : () => _generateAll(),
+                icon: aiState.isLoadingHashtags || aiState.isLoadingCaption
+                    ? const SizedBox(
+                        width: 16,
+                        height: 16,
+                        child: CircularProgressIndicator(
+                            strokeWidth: 2, color: Colors.white),
+                      )
+                    : const Icon(Icons.auto_awesome),
+                label: Text(
+                  aiState.isLoadingHashtags
+                      ? 'Generating Hashtags...'
+                      : aiState.isLoadingCaption
+                          ? 'Generating Caption...'
+                          : 'Generate',
                 ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: FilledButton.icon(
-                    onPressed:
-                        aiState.isLoadingCaption || !aiState.isModelReady
-                            ? null
-                            : () => _generateCaption(),
-                    icon: aiState.isLoadingCaption
-                        ? const SizedBox(
-                            width: 16,
-                            height: 16,
-                            child: CircularProgressIndicator(
-                                strokeWidth: 2, color: Colors.white),
-                          )
-                        : const Icon(Icons.edit_note),
-                    label: const Text('Caption'),
-                  ),
-                ),
-              ],
+              ),
             ),
             const SizedBox(height: 16),
 
@@ -301,6 +287,25 @@ class _AIGenerateScreenState extends ConsumerState<AIGenerateScreen> {
         ),
       ),
     );
+  }
+
+  Future<void> _generateAll() async {
+    final photoPath = widget.photoPath ?? '';
+    final language = ref.read(selectedLanguageProvider);
+    final style = ref.read(selectedStyleProvider);
+    final length = ref.read(selectedLengthProvider);
+    final customPrompt = style == GenerationStyle.custom
+        ? _customPromptController.text
+        : null;
+
+    await ref.read(aiGenerateNotifierProvider.notifier).generateAll(
+          photoLocalPath: photoPath,
+          language: language,
+          style: style,
+          length: length,
+          customPrompt: customPrompt,
+        );
+    ref.read(adServiceProvider).showInterstitialIfNeeded();
   }
 
   Future<void> _generateHashtags() async {

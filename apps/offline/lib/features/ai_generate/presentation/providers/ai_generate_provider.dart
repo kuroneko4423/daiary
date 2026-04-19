@@ -118,6 +118,31 @@ class AiGenerateNotifier extends StateNotifier<AiGenerateState> {
     }
   }
 
+  Future<void> generateAll({
+    required String photoLocalPath,
+    required String language,
+    required GenerationStyle style,
+    required GenerationLength length,
+    String? customPrompt,
+    int count = 10,
+    String usage = 'instagram',
+  }) async {
+    await generateHashtags(
+      photoLocalPath: photoLocalPath,
+      language: language,
+      count: count,
+      usage: usage,
+    );
+    if (state.error != null) return;
+    await generateCaption(
+      photoLocalPath: photoLocalPath,
+      language: language,
+      style: style,
+      length: length,
+      customPrompt: customPrompt,
+    );
+  }
+
   void clearResults() {
     state = const AiGenerateState();
   }
