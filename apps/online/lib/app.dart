@@ -11,9 +11,7 @@ class DAIaryApp extends ConsumerWidget {
     final router = ref.watch(routerProvider);
     return MaterialApp.router(
       title: 'dAIary',
-      theme: AppTheme.lightTheme,
-      darkTheme: AppTheme.darkTheme,
-      themeMode: ThemeMode.system,
+      theme: AppTheme.darkTheme,
       routerConfig: router,
       debugShowCheckedModeBanner: false,
     );

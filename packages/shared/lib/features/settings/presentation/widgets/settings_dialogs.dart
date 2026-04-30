@@ -65,48 +65,6 @@ void showStyleDialog(
   );
 }
 
-void showThemeDialog(
-  BuildContext context, {
-  required String current,
-  required ValueChanged<String> onChanged,
-}) {
-  showDialog(
-    context: context,
-    builder: (context) => SimpleDialog(
-      title: const Text('テーマ'),
-      children: [
-        RadioListTile<String>(
-          title: const Text('ライト'),
-          value: 'light',
-          groupValue: current,
-          onChanged: (value) {
-            if (value != null) onChanged(value);
-            Navigator.pop(context);
-          },
-        ),
-        RadioListTile<String>(
-          title: const Text('ダーク'),
-          value: 'dark',
-          groupValue: current,
-          onChanged: (value) {
-            if (value != null) onChanged(value);
-            Navigator.pop(context);
-          },
-        ),
-        RadioListTile<String>(
-          title: const Text('システム'),
-          value: 'system',
-          groupValue: current,
-          onChanged: (value) {
-            if (value != null) onChanged(value);
-            Navigator.pop(context);
-          },
-        ),
-      ],
-    ),
-  );
-}
-
 String styleLabel(String style) {
   switch (style) {
     case 'poem':
@@ -121,17 +79,6 @@ String styleLabel(String style) {
       return 'ユーモア風';
     default:
       return 'カジュアル風';
-  }
-}
-
-String themeModeLabel(String mode) {
-  switch (mode) {
-    case 'light':
-      return 'ライト';
-    case 'dark':
-      return 'ダーク';
-    default:
-      return 'システム';
   }
 }
 

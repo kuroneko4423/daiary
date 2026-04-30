@@ -1,5 +1,6 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import '../../../../config/app_colors.dart';
 
 class CameraControls extends StatelessWidget {
   final VoidCallback? onCapture;
@@ -41,7 +42,7 @@ class CameraControls extends StatelessWidget {
                 onPressed: onToggleGrid,
                 icon: Icon(
                   Icons.grid_on,
-                  color: showGridLines ? Colors.yellow : Colors.white,
+                  color: showGridLines ? AppColors.warning : Colors.white,
                 ),
                 tooltip: 'グリッド線',
               ),

@@ -3,6 +3,7 @@ import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:daiary_shared/config/app_colors.dart';
 import 'package:daiary_shared/core/constants/share_constants.dart';
 import 'package:daiary_shared/services/share_service.dart';
 import 'package:daiary_shared/features/camera/presentation/providers/camera_state.dart';
@@ -168,7 +169,7 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
     }
 
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: AppColors.ink950,
       body: SafeArea(
         child: _isInitializing
             ? const Center(
@@ -256,9 +257,9 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
 
   Widget _buildPreviewScreen(String imagePath) {
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: AppColors.ink950,
       appBar: AppBar(
-        backgroundColor: Colors.black,
+        backgroundColor: AppColors.ink950,
         foregroundColor: Colors.white,
         title: const Text('Preview'),
         leading: IconButton(

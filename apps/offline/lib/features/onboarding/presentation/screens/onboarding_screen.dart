@@ -1,3 +1,4 @@
+import 'package:daiary_shared/config/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -92,7 +93,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                               ? Icons.check_circle
                               : Icons.download,
                           color: state.isModelReady
-                              ? Colors.green
+                              ? AppColors.success
                               : theme.colorScheme.primary,
                         ),
                         const SizedBox(width: 12),

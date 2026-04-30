@@ -53,17 +53,6 @@ class SettingsScreen extends ConsumerWidget {
           ),
           const Divider(),
 
-          // Theme section
-          _buildSectionHeader(context, 'Appearance'),
-          ListTile(
-            leading: const Icon(Icons.palette),
-            title: const Text('Theme'),
-            subtitle: Text(_themeModeLabel(settings.themeMode)),
-            trailing: const Icon(Icons.chevron_right),
-            onTap: () => _showThemeDialog(context, ref, settings.themeMode),
-          ),
-          const Divider(),
-
           // Storage section
           _buildSectionHeader(context, 'Storage'),
           ListTile(
@@ -165,17 +154,6 @@ class SettingsScreen extends ConsumerWidget {
     }
   }
 
-  String _themeModeLabel(String mode) {
-    switch (mode) {
-      case 'light':
-        return 'Light';
-      case 'dark':
-        return 'Dark';
-      default:
-        return 'System';
-    }
-  }
-
   void _showLanguageDialog(
       BuildContext context, WidgetRef ref, String current) {
     showDialog(
@@ -236,50 +214,6 @@ class SettingsScreen extends ConsumerWidget {
             },
           );
         }).toList(),
-      ),
-    );
-  }
-
-  void _showThemeDialog(BuildContext context, WidgetRef ref, String current) {
-    showDialog(
-      context: context,
-      builder: (context) => SimpleDialog(
-        title: const Text('Theme'),
-        children: [
-          RadioListTile<String>(
-            title: const Text('Light'),
-            value: 'light',
-            groupValue: current,
-            onChanged: (value) {
-              if (value != null) {
-                ref.read(settingsProvider.notifier).setThemeMode(value);
-              }
-              Navigator.pop(context);
-            },
-          ),
-          RadioListTile<String>(
-            title: const Text('Dark'),
-            value: 'dark',
-            groupValue: current,
-            onChanged: (value) {
-              if (value != null) {
-                ref.read(settingsProvider.notifier).setThemeMode(value);
-              }
-              Navigator.pop(context);
-            },
-          ),
-          RadioListTile<String>(
-            title: const Text('System'),
-            value: 'system',
-            groupValue: current,
-            onChanged: (value) {
-              if (value != null) {
-                ref.read(settingsProvider.notifier).setThemeMode(value);
-              }
-              Navigator.pop(context);
-            },
-          ),
-        ],
       ),
     );
   }

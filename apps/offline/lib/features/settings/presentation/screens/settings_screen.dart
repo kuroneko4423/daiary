@@ -50,18 +50,6 @@ class SettingsScreen extends ConsumerWidget {
           ),
           const Divider(),
 
-          // Theme section
-          _buildSectionHeader(context, '外観'),
-          ListTile(
-            leading: const Icon(Icons.palette),
-            title: const Text('テーマ'),
-            subtitle: Text(_themeModeLabel(settings.themeMode)),
-            trailing: const Icon(Icons.chevron_right),
-            onTap: () =>
-                _showThemeDialog(context, ref, settings.themeMode),
-          ),
-          const Divider(),
-
           // Storage section
           _buildSectionHeader(context, 'ストレージ'),
           _buildStorageTile(ref),
@@ -200,17 +188,6 @@ class SettingsScreen extends ConsumerWidget {
     }
   }
 
-  String _themeModeLabel(String mode) {
-    switch (mode) {
-      case 'light':
-        return 'ライト';
-      case 'dark':
-        return 'ダーク';
-      default:
-        return 'システム';
-    }
-  }
-
   void _showLanguageDialog(
       BuildContext context, WidgetRef ref, String current) {
     showDialog(
@@ -271,50 +248,6 @@ class SettingsScreen extends ConsumerWidget {
             },
           );
         }).toList(),
-      ),
-    );
-  }
-
-  void _showThemeDialog(BuildContext context, WidgetRef ref, String current) {
-    showDialog(
-      context: context,
-      builder: (context) => SimpleDialog(
-        title: const Text('テーマ'),
-        children: [
-          RadioListTile<String>(
-            title: const Text('ライト'),
-            value: 'light',
-            groupValue: current,
-            onChanged: (value) {
-              if (value != null) {
-                ref.read(settingsProvider.notifier).setThemeMode(value);
-              }
-              Navigator.pop(context);
-            },
-          ),
-          RadioListTile<String>(
-            title: const Text('ダーク'),
-            value: 'dark',
-            groupValue: current,
-            onChanged: (value) {
-              if (value != null) {
-                ref.read(settingsProvider.notifier).setThemeMode(value);
-              }
-              Navigator.pop(context);
-            },
-          ),
-          RadioListTile<String>(
-            title: const Text('システム'),
-            value: 'system',
-            groupValue: current,
-            onChanged: (value) {
-              if (value != null) {
-                ref.read(settingsProvider.notifier).setThemeMode(value);
-              }
-              Navigator.pop(context);
-            },
-          ),
-        ],
       ),
     );
   }

@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../domain/entities/app_settings.dart';
 import '../../data/repositories/settings_repository.dart';
@@ -27,7 +26,6 @@ class SettingsNotifier extends StateNotifier<AppSettings> {
     state = AppSettings(
       defaultLanguage: language,
       defaultStyle: state.defaultStyle,
-      themeMode: state.themeMode,
       notificationsEnabled: state.notificationsEnabled,
     );
     await _repository.saveSettings(state);
@@ -37,30 +35,8 @@ class SettingsNotifier extends StateNotifier<AppSettings> {
     state = AppSettings(
       defaultLanguage: state.defaultLanguage,
       defaultStyle: style,
-      themeMode: state.themeMode,
       notificationsEnabled: state.notificationsEnabled,
     );
     await _repository.saveSettings(state);
-  }
-
-  Future<void> setThemeMode(String mode) async {
-    state = AppSettings(
-      defaultLanguage: state.defaultLanguage,
-      defaultStyle: state.defaultStyle,
-      themeMode: mode,
-      notificationsEnabled: state.notificationsEnabled,
-    );
-    await _repository.saveSettings(state);
-  }
-
-  ThemeMode get themeMode {
-    switch (state.themeMode) {
-      case 'light':
-        return ThemeMode.light;
-      case 'dark':
-        return ThemeMode.dark;
-      default:
-        return ThemeMode.system;
-    }
   }
 }

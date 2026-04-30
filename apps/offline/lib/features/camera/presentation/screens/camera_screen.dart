@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:camera/camera.dart';
+import 'package:daiary_shared/config/app_colors.dart';
 import 'package:daiary_shared/core/constants/share_constants.dart';
 import 'package:daiary_shared/services/share_service.dart';
 import 'package:flutter/material.dart';
@@ -171,7 +172,7 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
     }
 
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: AppColors.ink950,
       body: SafeArea(
         child: _isInitializing
             ? const Center(
@@ -259,9 +260,9 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
 
   Widget _buildPreviewScreen(String imagePath) {
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: AppColors.ink950,
       appBar: AppBar(
-        backgroundColor: Colors.black,
+        backgroundColor: AppColors.ink950,
         foregroundColor: Colors.white,
         title: const Text('プレビュー'),
         leading: IconButton(

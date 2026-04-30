@@ -1,70 +1,177 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'app_colors.dart';
 
+/// デザインルール準拠のアプリテーマ（ダーク専用）
 class AppTheme {
   AppTheme._();
 
-  static const _primaryColor = Color(0xFF1565C0);
-  static const _secondaryColor = Color(0xFF00897B);
-
-  static final lightTheme = ThemeData(
+  static ThemeData darkTheme = ThemeData(
     useMaterial3: true,
-    colorScheme: ColorScheme.fromSeed(
-      seedColor: _primaryColor,
-      secondary: _secondaryColor,
-      brightness: Brightness.light,
+    brightness: Brightness.dark,
+    scaffoldBackgroundColor: AppColors.ink950,
+
+    colorScheme: const ColorScheme.dark(
+      primary: AppColors.primary,
+      onPrimary: Colors.white,
+      secondary: AppColors.primaryLight,
+      surface: AppColors.ink900,
+      onSurface: Colors.white,
+      error: AppColors.error,
     ),
-    appBarTheme: const AppBarTheme(
-      centerTitle: true,
-      elevation: 0,
-    ),
-    cardTheme: const CardThemeData(
-      elevation: 2,
-      margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-    ),
-    inputDecorationTheme: InputDecorationTheme(
-      border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
+
+    // タイポグラフィ - Noto Sans JP
+    textTheme: GoogleFonts.notoSansJpTextTheme(
+      const TextTheme(
+        displayLarge: TextStyle(
+          fontSize: 40,
+          fontWeight: FontWeight.bold,
+          color: Colors.white,
+          height: 1.1,
+          letterSpacing: -0.5,
+        ),
+        displayMedium: TextStyle(
+          fontSize: 36,
+          fontWeight: FontWeight.bold,
+          color: Colors.white,
+          height: 1.1,
+          letterSpacing: -0.5,
+        ),
+        headlineLarge: TextStyle(
+          fontSize: 28,
+          fontWeight: FontWeight.bold,
+          color: Colors.white,
+          height: 1.2,
+        ),
+        headlineMedium: TextStyle(
+          fontSize: 24,
+          fontWeight: FontWeight.w700,
+          color: Colors.white,
+          height: 1.25,
+        ),
+        titleLarge: TextStyle(
+          fontSize: 20,
+          fontWeight: FontWeight.w600,
+          color: Colors.white,
+          height: 1.3,
+        ),
+        titleMedium: TextStyle(
+          fontSize: 18,
+          fontWeight: FontWeight.w600,
+          color: Colors.white,
+          height: 1.4,
+        ),
+        titleSmall: TextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.w600,
+          color: Colors.white,
+        ),
+        bodyLarge: TextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.w400,
+          color: Colors.white,
+          height: 1.6,
+        ),
+        bodyMedium: TextStyle(
+          fontSize: 15,
+          fontWeight: FontWeight.w400,
+          color: Colors.white,
+          height: 1.6,
+        ),
+        bodySmall: TextStyle(
+          fontSize: 13,
+          fontWeight: FontWeight.w400,
+          color: Colors.white,
+          height: 1.5,
+        ),
+        labelLarge: TextStyle(
+          fontSize: 14,
+          fontWeight: FontWeight.w500,
+          color: Colors.white,
+        ),
+        labelMedium: TextStyle(
+          fontSize: 12,
+          fontWeight: FontWeight.w500,
+          color: Colors.white,
+        ),
+        labelSmall: TextStyle(
+          fontSize: 11,
+          fontWeight: FontWeight.w500,
+          color: Colors.white,
+        ),
       ),
-      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
     ),
+
+    appBarTheme: const AppBarTheme(
+      backgroundColor: AppColors.ink950,
+      foregroundColor: Colors.white,
+      elevation: 0,
+      centerTitle: true,
+      titleTextStyle: TextStyle(
+        fontSize: 16,
+        fontWeight: FontWeight.w600,
+        color: Colors.white,
+      ),
+    ),
+
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+        backgroundColor: AppColors.primary,
+        foregroundColor: Colors.white,
+        elevation: 0,
+        minimumSize: const Size(0, 48),
+        textStyle: const TextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.w600,
+        ),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
         ),
       ),
     ),
-  );
 
-  static final darkTheme = ThemeData(
-    useMaterial3: true,
-    colorScheme: ColorScheme.fromSeed(
-      seedColor: _primaryColor,
-      secondary: _secondaryColor,
-      brightness: Brightness.dark,
-    ),
-    appBarTheme: const AppBarTheme(
-      centerTitle: true,
+    cardTheme: CardThemeData(
+      color: AppColors.ink900,
       elevation: 0,
-    ),
-    cardTheme: const CardThemeData(
-      elevation: 2,
-      margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-    ),
-    inputDecorationTheme: InputDecorationTheme(
-      border: OutlineInputBorder(
+      shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
+        side: const BorderSide(color: AppColors.ink800, width: 1),
       ),
-      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
     ),
-    elevatedButtonTheme: ElevatedButtonThemeData(
-      style: ElevatedButton.styleFrom(
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+
+    inputDecorationTheme: InputDecorationTheme(
+      filled: true,
+      fillColor: AppColors.ink900,
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(8),
+        borderSide: const BorderSide(color: AppColors.ink800),
       ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(8),
+        borderSide: const BorderSide(color: AppColors.ink800),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(8),
+        borderSide: const BorderSide(color: AppColors.primary, width: 2),
+      ),
+      hintStyle: TextStyle(
+        color: AppColors.whiteAlpha(0.3),
+        fontSize: 13,
+      ),
+    ),
+
+    dividerTheme: const DividerThemeData(
+      color: AppColors.ink800,
+      thickness: 1,
+      space: 1,
+    ),
+
+    bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+      backgroundColor: AppColors.ink900,
+      selectedItemColor: Colors.white,
+      unselectedItemColor: AppColors.neutral500,
+      type: BottomNavigationBarType.fixed,
+      elevation: 0,
     ),
   );
 }

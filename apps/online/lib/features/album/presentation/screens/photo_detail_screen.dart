@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:daiary_shared/config/app_colors.dart';
 import 'package:daiary_shared/domain/models/photo.dart';
 import 'package:daiary_shared/services/share_service.dart';
 import '../../../../services/api_client.dart';
@@ -39,9 +40,9 @@ class PhotoDetailScreen extends ConsumerWidget {
     final theme = Theme.of(context);
 
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: AppColors.ink950,
       appBar: AppBar(
-        backgroundColor: Colors.black,
+        backgroundColor: AppColors.ink950,
         foregroundColor: Colors.white,
         title: const Text('Photo'),
         actions: [
@@ -84,7 +85,7 @@ class PhotoDetailScreen extends ConsumerWidget {
         maxScale: 4.0,
         child: Center(
           child: Container(
-            color: Colors.black,
+            color: AppColors.ink950,
             child: const Icon(Icons.photo, size: 200, color: Colors.white38),
           ),
         ),
@@ -96,7 +97,7 @@ class PhotoDetailScreen extends ConsumerWidget {
       BuildContext context, WidgetRef ref, Photo photo, ThemeData theme) {
     return SafeArea(
       child: Container(
-        color: Colors.black,
+        color: AppColors.ink950,
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -110,7 +111,7 @@ class PhotoDetailScreen extends ConsumerWidget {
                       ? Icons.favorite
                       : Icons.favorite_border,
                   label: 'Favorite',
-                  color: photo.isFavorite ? Colors.red : Colors.white,
+                  color: photo.isFavorite ? AppColors.primary : Colors.white,
                   onTap: () {
                     // Toggle favorite
                   },
@@ -118,7 +119,7 @@ class PhotoDetailScreen extends ConsumerWidget {
                 _buildActionButton(
                   icon: Icons.auto_awesome,
                   label: 'AI Generate',
-                  color: Colors.amber,
+                  color: AppColors.warning,
                   onTap: () =>
                       context.push('/ai-generate', extra: photo.storagePath),
                 ),
@@ -203,7 +204,7 @@ class PhotoDetailScreen extends ConsumerWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(label, style: const TextStyle(fontWeight: FontWeight.w500)),
-          Text(value, style: const TextStyle(color: Colors.grey)),
+          Text(value, style: const TextStyle(color: AppColors.neutral400)),
         ],
       ),
     );

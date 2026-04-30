@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:daiary_shared/config/app_colors.dart';
 import 'package:daiary_shared/core/constants/share_constants.dart';
 import 'package:daiary_shared/domain/models/generation_result.dart';
 import 'package:daiary_shared/features/ai_generate/presentation/widgets/result_card.dart';
@@ -60,7 +61,7 @@ class _AIGenerateScreenState extends ConsumerState<AIGenerateScreen> {
               child: Text(
                 aiState.isModelReady ? '準備完了' : 'モデル未ダウンロード',
                 style: theme.textTheme.bodySmall?.copyWith(
-                  color: aiState.isModelReady ? Colors.green : Colors.orange,
+                  color: aiState.isModelReady ? AppColors.success : AppColors.warning,
                   fontWeight: FontWeight.bold,
                 ),
               ),

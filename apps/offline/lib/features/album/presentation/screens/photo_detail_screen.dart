@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:daiary_shared/config/app_colors.dart';
 import 'package:daiary_shared/domain/models/photo.dart';
 import 'package:daiary_shared/services/share_service.dart';
 import 'package:flutter/material.dart';
@@ -25,9 +26,9 @@ class PhotoDetailScreen extends ConsumerWidget {
     final photoAsync = ref.watch(photoDetailProvider(photoId));
 
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: AppColors.ink950,
       appBar: AppBar(
-        backgroundColor: Colors.black,
+        backgroundColor: AppColors.ink950,
         foregroundColor: Colors.white,
         title: const Text('写真'),
         actions: [
@@ -75,7 +76,7 @@ class PhotoDetailScreen extends ConsumerWidget {
   Widget _buildBottomBar(BuildContext context, WidgetRef ref, Photo photo) {
     return SafeArea(
       child: Container(
-        color: Colors.black,
+        color: AppColors.ink950,
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -83,7 +84,7 @@ class PhotoDetailScreen extends ConsumerWidget {
             _buildActionButton(
               icon: photo.isFavorite ? Icons.favorite : Icons.favorite_border,
               label: 'お気に入り',
-              color: photo.isFavorite ? Colors.red : Colors.white,
+              color: photo.isFavorite ? AppColors.primary : Colors.white,
               onTap: () {
                 ref
                     .read(photoListNotifierProvider.notifier)
@@ -93,7 +94,7 @@ class PhotoDetailScreen extends ConsumerWidget {
             _buildActionButton(
               icon: Icons.auto_awesome,
               label: 'AI生成',
-              color: Colors.amber,
+              color: AppColors.warning,
               onTap: () =>
                   context.push('/ai-generate', extra: photo.imagePath),
             ),
@@ -169,7 +170,7 @@ class PhotoDetailScreen extends ConsumerWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(label, style: const TextStyle(fontWeight: FontWeight.w500)),
-          Text(value, style: const TextStyle(color: Colors.grey)),
+          Text(value, style: const TextStyle(color: AppColors.neutral400)),
         ],
       ),
     );
