@@ -1,4 +1,5 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -56,6 +57,7 @@ class OnboardingNotifier extends StateNotifier<OnboardingState> {
     if (!skipWifiCheck) {
       final onWifi = await isOnWifi();
       if (!onWifi) {
+        debugPrint('[Onboarding] downloadModel blocked: not on wifi');
         state = state.copyWith(
           error: 'wifi_required',
         );
@@ -63,26 +65,36 @@ class OnboardingNotifier extends StateNotifier<OnboardingState> {
       }
     }
 
+    debugPrint('[Onboarding] downloadModel start');
     state =
         state.copyWith(isDownloading: true, downloadProgress: 0.0, error: null);
 
     try {
-      // Set up progress callback
+      var lastLoggedDecile = -1;
       _channel.setMethodCallHandler((call) async {
         if (call.method == 'onDownloadProgress') {
           final progress = call.arguments as double;
+          final decile = (progress * 10).floor();
+          if (decile != lastLoggedDecile) {
+            lastLoggedDecile = decile;
+            debugPrint(
+              '[Onboarding] download progress ${(progress * 100).toStringAsFixed(0)}%',
+            );
+          }
           state = state.copyWith(downloadProgress: progress);
         }
       });
 
       await _channel.invokeMethod('downloadModel');
 
+      debugPrint('[Onboarding] downloadModel complete');
       state = state.copyWith(
         isModelReady: true,
         isDownloading: false,
         downloadProgress: 1.0,
       );
     } catch (e) {
+      debugPrint('[Onboarding] downloadModel failed: $e');
       state = state.copyWith(
         isDownloading: false,
         error: 'Download failed: $e',
@@ -91,6 +103,7 @@ class OnboardingNotifier extends StateNotifier<OnboardingState> {
   }
 
   void cancelDownload() {
+    debugPrint('[Onboarding] downloadModel cancel requested');
     _channel.invokeMethod('cancelDownload');
     state = state.copyWith(isDownloading: false, downloadProgress: 0.0);
   }

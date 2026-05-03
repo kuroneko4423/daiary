@@ -1,4 +1,7 @@
 import 'dart:convert';
+import 'dart:io';
+import 'dart:math';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:uuid/uuid.dart';
 import '../../../../services/database_service.dart';
@@ -24,6 +27,12 @@ class AiLocalDataSource {
   }) async {
     final stopwatch = Stopwatch()..start();
 
+    final photoBytes = await _safeFileLength(photoLocalPath);
+    debugPrint(
+      '[AiLocal] generateHashtags photo=$photoLocalPath bytes=$photoBytes '
+      'lang=$language count=$count usage=$usage',
+    );
+
     final result = await _channel.invokeMethod<String>('generateHashtags', {
       'photoPath': photoLocalPath,
       'language': language,
@@ -32,11 +41,11 @@ class AiLocalDataSource {
     });
 
     stopwatch.stop();
+    _logRawResponse('hashtags', result);
 
-    final parsed = _parseJsonResponse(result ?? '{"hashtags": []}');
+    final parsed = _parseJsonResponseStrict('hashtags', result ?? '{"hashtags": []}');
     final hashtags = (parsed['hashtags'] as List<dynamic>).cast<String>();
 
-    // Save to DB
     await _saveGeneration(
       photoPath: photoLocalPath,
       generationType: 'hashtags',
@@ -57,6 +66,12 @@ class AiLocalDataSource {
   }) async {
     final stopwatch = Stopwatch()..start();
 
+    final photoBytes = await _safeFileLength(photoLocalPath);
+    debugPrint(
+      '[AiLocal] generateCaption photo=$photoLocalPath bytes=$photoBytes '
+      'lang=$language style=$style length=$length',
+    );
+
     final result = await _channel.invokeMethod<String>('generateCaption', {
       'photoPath': photoLocalPath,
       'language': language,
@@ -66,11 +81,11 @@ class AiLocalDataSource {
     });
 
     stopwatch.stop();
+    _logRawResponse('caption', result);
 
-    final parsed = _parseJsonResponse(result ?? '{"caption": ""}');
+    final parsed = _parseJsonResponseStrict('caption', result ?? '{"caption": ""}');
     final caption = parsed['caption'] as String;
 
-    // Save to DB
     await _saveGeneration(
       photoPath: photoLocalPath,
       generationType: 'caption',
@@ -83,14 +98,34 @@ class AiLocalDataSource {
     return {'caption': caption};
   }
 
-  Map<String, dynamic> _parseJsonResponse(String response) {
-    // Strip markdown code fences if present
+  Future<int> _safeFileLength(String path) async {
+    try {
+      return await File(path).length();
+    } catch (_) {
+      return -1;
+    }
+  }
+
+  void _logRawResponse(String kind, String? raw) {
+    final value = raw ?? '';
+    final head = value.substring(0, min(300, value.length));
+    debugPrint(
+      '[AiLocal] $kind raw response (${value.length} chars): $head',
+    );
+  }
+
+  Map<String, dynamic> _parseJsonResponseStrict(String kind, String response) {
     var cleaned = response.trim();
     if (cleaned.startsWith('```')) {
       cleaned = cleaned.replaceFirst(RegExp(r'^```\w*\n?'), '');
       cleaned = cleaned.replaceFirst(RegExp(r'\n?```$'), '');
     }
-    return jsonDecode(cleaned.trim()) as Map<String, dynamic>;
+    try {
+      return jsonDecode(cleaned.trim()) as Map<String, dynamic>;
+    } catch (e) {
+      debugPrint('[AiLocal] $kind JSON parse failed: $e raw=$response');
+      rethrow;
+    }
   }
 
   Future<void> _saveGeneration({
@@ -116,7 +151,7 @@ class AiLocalDataSource {
       'id': _uuid.v4(),
       'photo_id': photoId,
       'generation_type': generationType,
-      'model': 'gemma-4-e2b',
+      'model': 'gemma-3n-e2b',
       'result': result,
       'style': style,
       'language': language,
